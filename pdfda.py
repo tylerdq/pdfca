@@ -1,6 +1,7 @@
 import PyPDF2 as pyp
 #import os
-import pandas as pd
+#import pandas as pd
+import csv
 
 pages,digi,rhet = [], [], []
 dfkeys = ['p#', 'digital#', 'rhetoric#']
@@ -26,9 +27,18 @@ for page in pages:
 dfvalues = [pnums, digi, rhet]
 
 result = dict(zip(dfkeys, dfvalues))
-df = pd.DataFrame(data=result)
-print(df)
 
-#for word in words:
-#    (w, pages.count(w)) for w in set(pages)
-#print
+with open('output.csv', mode='w') as outfile:
+    out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+    out_writer.writerow(dfkeys)
+    for d in result.items():
+        out_writer.writerow(d)
+
+file.close()
+outfile.close()
+exit()
+
+#result = dict(zip(dfkeys, dfvalues))
+#df = pd.DataFrame(data=result)
+#print(df)
