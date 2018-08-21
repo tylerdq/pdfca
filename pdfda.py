@@ -1,6 +1,6 @@
 import PyPDF2 as pyp
 #import os
-#import pandas
+import pandas as pd
 
 pages,digi,rhet = [], [], []
 dfkeys = ['p#', 'digital#', 'rhetoric#']
@@ -10,24 +10,24 @@ worddict = dict(zip(words, wordvars))
 
 file = ('r15d.pdf')
 read_pdf = pyp.PdfFileReader(file)
-pnums = read_pdf.getNumPages()
+pnum = read_pdf.getNumPages()
+pnums = []
 
-for pnum in range(pnums):
-    text = read_pdf.getPage(pnum).extractText().split(" ")
+for p in range(pnum):
+    text = read_pdf.getPage(p).extractText().split(" ")
     pages.append(text)
+    pnums.append(p+1)
 #print(pages[0])
-
-counter = []
 
 for page in pages:
     for k, i in worddict.items():
         i.append(sum(k in w for w in page))
 
-print(worddict)
+dfvalues = [pnums, digi, rhet]
 
-#dvalues =
-
-#result = dict(zip(dfkeys, ))
+result = dict(zip(dfkeys, dfvalues))
+df = pd.DataFrame(data=result)
+print(df)
 
 #for word in words:
 #    (w, pages.count(w)) for w in set(pages)
