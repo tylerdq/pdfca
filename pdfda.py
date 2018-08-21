@@ -3,10 +3,10 @@ import PyPDF2 as pyp
 #import pandas as pd
 import csv
 
-pages,digi,rhet = [], [], []
-dfkeys = ['p#', 'digital#', 'rhetoric#']
-words = ['digi', 'rhet']
-wordvars = [digi, rhet]
+pages,digit,rhetor = [], [], []
+dfkeys = ['p#', 'digit#', 'rhetor#']
+words = ['digit', 'rhetor']
+wordvars = [digit, rhetor]
 worddict = dict(zip(words, wordvars))
 
 file = ('r15d.pdf')
@@ -24,7 +24,7 @@ for page in pages:
     for k, i in worddict.items():
         i.append(sum(k in w for w in page))
 
-dfvalues = [pnums, digi, rhet]
+dfvalues = [pnums, digit, rhetor]
 
 result = dict(zip(dfkeys, dfvalues))
 
@@ -32,11 +32,8 @@ with open('output.csv', mode='w') as outfile:
     out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
     out_writer.writerow(dfkeys)
-    for d in result.items():
-        out_writer.writerow(d)
+    out_writer.writerows(zip(*result.values()))
 
-file.close()
-outfile.close()
 exit()
 
 #result = dict(zip(dfkeys, dfvalues))
