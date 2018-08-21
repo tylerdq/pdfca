@@ -1,49 +1,44 @@
 import sys
 import PyPDF2 as pyp
 import os
+from collections import defaultdict
 #import pandas as pd
 import csv
 
-word = sys.argv[1]
+word = str(sys.argv[1])
 
-pages = []
-#pages,digit,rhetor = [], [], []
-head = ['p#']
-words = ['digit', 'rhetor']
+pdict = {}
 #wordvars = [digit, rhetor]
 #worddict = dict(zip(words, wordvars))
 
 #file = ('r15d.pdf')
 for file in os.listdir(os.getcwd()):
     if file.endswith(".pdf"):
-        head.append(file[:-4])
+        f = file[:-4]
+        pdict[f] = []
         read_pdf = pyp.PdfFileReader(file)
         pnum = read_pdf.getNumPages()
-        pnums = []
-print(head)
 
-#    for p in range(pnum):
-#        text = read_pdf.getPage(p).extractText().split(" ")
-#        pages.append(text)
-#        pnums.append(p+1)
-    #print(pages[0])
+        for p in range(pnum):
+            pages = []
+            text = read_pdf.getPage(p).extractText().split(" ")
+            pages.append(text)
 
-#    for page in pages:
-#        for k, i in worddict.items():
-#            i.append(sum(k in w for w in page))
+        for page in pages:
+            pdict[f].append(sum(word in w for w in page))
+#            for k, i in worddict.items():
+#                i.append(sum(k in w for w in page))
 
-dfvalues = [pnums, digit, rhetor]
+print(pdict)
 
-result = dict(zip(head, dfvalues))
-
-with open('output.csv', mode='w') as outfile:
-    out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
-    out_writer.writerow(head)
-    out_writer.writerows(zip(*result.values()))
-
-exit()
+#dfvalues = [pnums, digit, rhetor]
 
 #result = dict(zip(head, dfvalues))
-#df = pd.DataFrame(data=result)
-#print(df)
+
+#with open('output.csv', mode='w') as outfile:
+#    out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+#    out_writer.writerow(head)
+#    out_writer.writerows(zip(*result.values()))
+
+exit()
