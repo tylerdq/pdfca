@@ -1,8 +1,12 @@
 import PyPDF2 as pyp
 #import os
+#import pandas
 
-pages = []
-words = ['digital','rhetoric']
+pages,digital,rhetoric = [], [], []
+dfkeys = ['p#', 'digital#', 'rhetoric#']
+words = ['digi', 'rhet']
+wordvars = [digital, rhetoric]
+worddict = dict(zip(words, wordvars))
 
 file = ('r15d.pdf')
 read_pdf = pyp.PdfFileReader(file)
@@ -16,10 +20,14 @@ for pnum in range(pnums):
 counter = []
 
 for p in pages:
-    for word in words:
-        counter.append(p.count(word))
+    for k, i in worddict.items():
+        i.append(p.count(k))
 
-print(counter)
+print(worddict)
+
+#dvalues =
+
+#result = dict(zip(dfkeys, ))
 
 #for word in words:
 #    (w, pages.count(w)) for w in set(pages)
