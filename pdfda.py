@@ -5,11 +5,10 @@ import os
 import csv
 
 word = sys.argv[1]
-
 pdict = {}
-
-for file in os.listdir(os.getcwd()):
-    if file.endswith(".pdf"):
+os.chdir('files')
+for file in os.listdir('.'):
+    if file.endswith('.pdf'):
         f = file[:-4]
         pdict[f] = []
         read_pdf = pyp.PdfFileReader(file)
