@@ -6,7 +6,7 @@ import csv
 
 word = sys.argv[1]
 pdict = {}
-os.chdir('files')
+os.chdir('input')
 for file in os.listdir('.'):
     if file.endswith('.pdf'):
         f = file[:-4]
@@ -20,19 +20,13 @@ for file in os.listdir('.'):
             pages.append(text)
             for page in pages:
                 pdict[f].append(sum(word in w for w in page))
-#            for k, i in worddict.items():
-#                i.append(sum(k in w for w in page))
 
-print(pdict)
+os.chdir('../output')
 
-#dfvalues = [pnums, digit, rhetor]
+with open('output_' + word + '.csv', mode='w') as outfile:
+    out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-#result = dict(zip(head, dfvalues))
-
-#with open('output.csv', mode='w') as outfile:  # todo: make filename 'output_' + word + '.csv'
-#    out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
-#    out_writer.writerow(head)
-#    out_writer.writerows(zip(*result.values()))
+    out_writer.writerow(pdict.keys())
+    out_writer.writerows(zip(*pdict.values()))
 
 exit()
