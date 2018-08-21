@@ -5,15 +5,24 @@ import os
 import itertools
 import csv
 
-word = sys.argv[1]
 pdict = {}
 os.chdir('input')
+
+word = sys.argv[1]
+
+#words = open(sys.argv[1], 'rt')
+
+#for word in words:
+#    word = word.strip()
+#    print(word)
+
 for file in os.listdir('.'):
     if file.endswith('.pdf'):
         f = file[:-4]
         pdict[f] = []
         read_pdf = pyp.PdfFileReader(file)
         pnum = read_pdf.getNumPages()
+        print(str(pnum) + ' pages in ' + str(file))
 
         for p in range(pnum):
             pages = []
@@ -21,6 +30,7 @@ for file in os.listdir('.'):
             pages.append(text)
             for page in pages:
                 pdict[f].append(sum(word in w for w in page))
+        print('Extracted text from ' + str(file))
 
 os.chdir('../output')
 
