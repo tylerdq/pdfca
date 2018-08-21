@@ -15,7 +15,7 @@ for file in os.listdir(os.getcwd()):
         read_pdf = pyp.PdfFileReader(file)
         pnum = read_pdf.getNumPages()
 
-        for p in range(1):
+        for p in range(pnum):
             pages = []
             text = read_pdf.getPage(p).extractText().lower().split(" ")
             pages.append(text)
