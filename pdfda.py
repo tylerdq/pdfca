@@ -2,6 +2,7 @@ import sys
 import PyPDF2 as pyp
 import os
 #import pandas as pd
+import itertools
 import csv
 
 word = sys.argv[1]
@@ -27,6 +28,6 @@ with open('output_' + word + '.csv', mode='w') as outfile:
     out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
     out_writer.writerow(pdict.keys())
-    out_writer.writerows(zip(*pdict.values()))
+    out_writer.writerows(itertools.zip_longest(*pdict.values()))
 
 exit()
