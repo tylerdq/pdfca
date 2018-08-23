@@ -6,44 +6,54 @@ import os
 import itertools
 import csv
 
+#word = sys.argv[1]
+ndict = {}  # Preallocate empty dict for number of pages per PDF
+pdict = {}  # Preallocate empty dict for page contents per PDF
+cdict = {}  # Preallocate empty dict for term counts per PDF
+words = open(sys.argv[1], 'rt')  # Create variable for input file
+
 os.chdir('input')  # Change directory to location of PDFs
 
-#word = sys.argv[1]
+#for word in words:
+#    word = word.strip()
+#    print('Searching for ' + '"' + word + '"' + ' in files...')
+print('Looking for PDFs to scrape...')
+for file in os.listdir('.'):  # Loop through all files in input folder
+    if file.endswith('.pdf'):  # Filter only PDFs
+        f = file[:-4]  # Trim extension from filename
+        ndict[f] = []  # Create file keys in dict with empty list for each
+        pdict[f] = {}  # Create file keys in dict with empty dict for each
+        cdict[f] = {}
+        read_pdf = pyp.PdfFileReader(file)  # Name reader for current PDF
+        ndict[f] = read_pdf.getNumPages()  # Count pages in current PDF
+        print('--- ' + str(ndict[f]) + ' pages in ' + str(file))  # Display progress
 
-words = open(sys.argv[1], 'rt')
-
-for word in words:
-    pdict = {}  # Preallocate empty dict for later use
-    word = word.strip()
-    print(word)
-
-    for file in os.listdir('.'):  # Loop through all files in input folder
-        if file.endswith('.pdf'):  # Filter only PDFs
-            f = file[:-4]  # Trim extension from filename
-            pdict[f] = []  # Create file keys in dict with empty list for each
-            read_pdf = pyp.PdfFileReader(file)  # Name reader for current PDF
-            pnum = read_pdf.getNumPages()  # Count pages in current PDF
-            print(str(pnum) + ' pages in ' + str(file))  # Display progress
-
-            for p in range(pnum):  # Loop through pages to extract text
-                pages = []  # Preallocate empty list for page contents
+        for f in ndict.keys():
+            for p in range(ndict[f]):  # Loop through pages to extract text
+                pdict[f][p] = []  # Preallocate empty list for page contents
                 text = read_pdf.getPage(p).extractText().lower().split(" ")
-                pages.append(text)  # Save extracted and split text
-                for page in pages:  # NOTE - can this loop be merged with above?
-                    #pset = set(page)  # Create a set of all words on page
-                    #for s in pset:  # Loop through unique words in the page
-                    #    pdict[f][s] = []
-                    #    pdict[f][s].append(sum(s in w for w in page))
-                    pdict[f].append(sum(word in w for w in page))
-            print('Extracted text from ' + str(file)) # Display progress
+                pdict[f][p].append(text)  # Save extracted and split text
 
-    #os.chdir('../output')  # Change directory to where csv will be saved
+os.chdir('../output')  # Change directory to where csv will be saved
 
-    with open('output_' + word + '.csv', mode='w') as outfile:  #
-        out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+print('Searching for words to count...')
+for word in words:  # Loop through words in input file
+    word = word.strip()  # Remove whitespace from words in input file
+    print('--- Counting ' + '"' + word + '"' + '...')
+    for k, v in pdict.items():  # Loop through page contents for each file
+        #cdict[f][k] = []  # Preallocate empty lists for each page
+        #print(pdict[f][p][0])
+        for n, p in v.items():
+            cdict[k][n] = sum(word in w for w in p)  # Count now
+        print('--- ' + 'Counted ' + word + ' in ' + k)  # Display progress
 
-        out_writer.writerow(pdict.keys())  # Write the header row
-        out_writer.writerows(itertools.zip_longest(*pdict.values()))
+    print(cdict)
+
+#    with open('output_' + word + '.csv', mode='w') as outfile:  #
+#        out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+#        out_writer.writerow(cdict.keys())  # Write the header row
+#        out_writer.writerows(itertools.zip_longest(*cdict.values()))
 
 print('Done!')
 
