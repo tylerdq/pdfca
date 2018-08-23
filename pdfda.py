@@ -30,9 +30,9 @@ for file in os.listdir('.'):  # Loop through all files in input folder
 
         for f in ndict.keys():
             for p in range(ndict[f]):  # Loop through pages to extract text
-                pdict[f][p] = []  # Preallocate empty list for page contents
-                text = read_pdf.getPage(p).extractText().lower().split(" ")
-                pdict[f][p].append(text)  # Save extracted and split text
+                #pdict[f][p] = []  # Preallocate empty list for page contents
+                #text = read_pdf.getPage(p).extractText().lower().split(" ")
+                pdict[f][p] = read_pdf.getPage(p).extractText().lower().strip().split(" ")  # Save extracted and split text
 
 os.chdir('../output')  # Change directory to where csv will be saved
 
@@ -41,8 +41,6 @@ for word in words:  # Loop through words in input file
     word = word.strip()  # Remove whitespace from words in input file
     print('--- Counting ' + '"' + word + '"' + '...')
     for k, v in pdict.items():  # Loop through page contents for each file
-        #cdict[f][k] = []  # Preallocate empty lists for each page
-        #print(pdict[f][p][0])
         for n, p in v.items():
             cdict[k][n] = sum(word in w for w in p)  # Count now
         print('--- ' + 'Counted ' + word + ' in ' + k)  # Display progress
