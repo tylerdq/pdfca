@@ -23,7 +23,7 @@ for file in os.listdir('.'):  # Loop through all files in input folder
         f = file[:-4]  # Trim extension from filename
         ndict[f] = []  # Create file keys in dict with empty list for each
         pdict[f] = {}  # Create file keys in dict with empty dict for each
-        cdict[f] = {}
+        #cdict[f] = []
         read_pdf = pyp.PdfFileReader(file)  # Name reader for current PDF
         ndict[f] = read_pdf.getNumPages()  # Count pages in current PDF
         print('--- ' + str(ndict[f]) + ' pages in ' + str(file))  # Display progress
@@ -34,18 +34,20 @@ for file in os.listdir('.'):  # Loop through all files in input folder
                 #text = read_pdf.getPage(p).extractText().lower().split(" ")
                 pdict[f][p] = read_pdf.getPage(p).extractText().lower().strip().split(" ")  # Save extracted and split text
 
-os.chdir('../output')  # Change directory to where csv will be saved
+print(pdict)
 
-print('Searching for words to count...')
-for word in words:  # Loop through words in input file
-    word = word.strip()  # Remove whitespace from words in input file
-    print('--- Counting ' + '"' + word + '"' + '...')
-    for k, v in pdict.items():  # Loop through page contents for each file
-        for n, p in v.items():
-            cdict[k][n] = sum(word in w for w in p)  # Count now
-        print('--- ' + 'Counted ' + word + ' in ' + k)  # Display progress
+#os.chdir('../output')  # Change directory to where csv will be saved
 
-    print(cdict)
+#print('Searching for words to count...')
+#for word in words:  # Loop through words in input file
+#    word = word.strip()  # Remove whitespace from words in input file
+#    print('--- Counting ' + '"' + word + '"' + '...')
+#    for k, v in pdict.items():  # Loop through page contents for each file
+#        cdict[k] = []
+#        for n, p in v.items():
+#            cdict[k].append(sum(word in w for w in p))  # Count now
+#        print('--- ' + 'Counted ' + word + ' in ' + k)  # Display progress
+#        print(cdict[k])
 
 #    with open('output_' + word + '.csv', mode='w') as outfile:  #
 #        out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
