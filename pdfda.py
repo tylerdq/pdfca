@@ -1,4 +1,4 @@
-import sys, os, PyPDF2, itertools, csv
+import sys, os, PyPDF2, json, itertools, csv
 
 pdict = {}  # Preallocate empty dict for page contents per PDF
 with open(sys.argv[1], 'rt') as input_file:  # Create variable for input file
@@ -6,7 +6,7 @@ with open(sys.argv[1], 'rt') as input_file:  # Create variable for input file
 
 os.chdir('input')  # Change directory to location of PDFs
 
-print('Looking for PDFs to scrape...')
+print('Extracting PDF contents...')
 for file in os.listdir('.'):  # Loop through all files in input folder
     if file.endswith('.pdf'):  # Filter only PDFs
         file_stem = file[:-4]  # Trim extension from filename
@@ -14,17 +14,17 @@ for file in os.listdir('.'):  # Loop through all files in input folder
         pdict[filename] = {}  # Create empty sub-dict for each file
         read_pdf = PyPDF2.PdfFileReader(file)  # Name reader for current PDF
         pnums = read_pdf.getNumPages()  # Count pages in current PDF
-        print('--- ' + str(pnums) + ' pages in ' + str(file))
 
         for pnum in range(pnums):
             text = read_pdf.getPage(pnum).extractText().strip().lower().split(" ")  # Extract and pre-process text
             pdict[filename][pnum] = text  # Write page text (merge with above?)
+        print(' - Extracted ' + str(pnums) + ' pages from ' + str(file))
 
 os.chdir('../output')  # Change to output directory
 
 output = {}
 
-print('Searching for words to count...')
+print('Counting words per page...')
 for filename, contents in pdict.items():
     output[filename] = {}
 
@@ -35,6 +35,7 @@ for filename, contents in pdict.items():
             word_stripped = word.strip()
             output[filename][page_number][word_stripped] = sum(word_stripped in sub_word for sub_word in words_list)
 
+print('Saving output...')
 text = 'file,page,term,count\n'
 for filename in output:
     pageData = output[filename]
@@ -47,6 +48,12 @@ for filename in output:
 f = open('output.csv', 'w')
 f.write(text)
 f.close()
+
+with open('output.txt', 'w') as outfile:
+    outfile.write(json.dumps(output))
+
+with open('pdict.txt', 'w') as pdict_file:
+    pdict_file.write(json.dumps(pdict))
 
 #print(output)
 
