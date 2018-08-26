@@ -18,7 +18,7 @@ pdfda searches each page in each PDF, meaning that if your search must begin wit
 Search terms can be any piece of text, including complete or partial words. Enter each term on a separate line of a plain-text (.txt) file. A sample file is provided in the base folder of the repository for testing purposes.
 
 ### Running the script
-`<terms file>` in the script command should be replaced by the actual name of the input file in the base directory of the repository. If using the test file or an updated version of it, type "words.txt" here (without the quotes). Any other filename can be used if 
+`<terms file>` in the script command should be replaced by the actual name of the input file in the base directory of the repository. If using the test file or an updated version of it, type "words.txt" here (without the quotes). Any other filename can be used if this portion of the command is updated according to its filename.
 
 ### Processing Output
 pdfda produces one output comma-separated values (.csv) file for each search term. These files appear in the "Output" directory once the script has run. These files can be opened in a plain-text editor or spreadsheet software such as Microsoft Excel or Google Sheets. The .csv files do not contain a column for page numbers as the counts are presented sequentially by page (even for pages without relevant terms); as such page numbers can easily be added post-hoc by the user if needed.
