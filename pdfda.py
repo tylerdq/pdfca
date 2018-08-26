@@ -1,4 +1,4 @@
-import sys, os, PyPDF2, json, itertools, csv, pandas
+import sys, os, PyPDF2, json, itertools, csv, pandas, xlwt
 
 pdict = {}  # Preallocate empty dict for page contents per PDF
 output = {}  # Preallocate empty dict for word counts per PDF
@@ -11,7 +11,7 @@ print('Extracting PDF contents...')
 for file in os.listdir('.'):  # Loop through all files in input folder
     if file.endswith('.pdf'):  # Filter only PDFs
         file_stem = file[:-4]  # Trim extension from filename
-        filename = str(file)
+        filename = str(file_stem)  # NEW THING - CHECK TO SEE IF '.pdf' IS GONE
         pdict[filename] = {}  # Create empty sub-dict for each file
         read_pdf = PyPDF2.PdfFileReader(file)  # Name reader for current PDF
         pnums = read_pdf.getNumPages()  # Count pages in current PDF
@@ -41,6 +41,23 @@ for word in words:
     df.to_csv(word + '.csv', index=False)
 
     print(' - Saved ' + word + '.csv in Output folder')
+
+if sys.argv[2] == 'ex':
+    print('Saving all outputs to Excel file...')
+
+
+#if sys.argv[2] == 'ex':
+#    print('Saving all ouputs to Excel file...')
+#    cdict = {}
+#    writer = pandas.ExcelWriter('output.xlsx', engine='xlsxwriter')
+#    for file in os.listdir('.'):
+#        if file.endswith('.csv'):
+#            file_stem = file[:-4]
+#            sheetname = str(file_stem)
+#            print('Writing ' + sheetname)
+#            cdict[file] = pandas.read_csv(file, sep='delimiter')
+#            cdict[file].to_excel(writer, sheet_name=sheetname)
+#    writer.save()
 
 print('Done!')
 
