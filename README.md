@@ -23,4 +23,4 @@ Search terms can be any piece of text, including complete or partial words. Ente
 ### Processing Output
 pdfda produces one output comma-separated values (.csv) file for each search term. These files appear in the "Output" directory once the script has run. These files can be opened in a plain-text editor or spreadsheet software such as Microsoft Excel or Google Sheets. The .csv files do not contain a column for page numbers as the counts are presented sequentially by page (including pages with a count of 0); as such page numbers can easily be added post-hoc by the user if needed.
 
-Sample output files are provided with the respository. These will be overwritten if the script is run again with the same search terms.
+Sample output files are provided with the respository. These will be overwritten if the script is run again with the same terms.
