@@ -42,22 +42,29 @@ for word in words:
 
     print(' - Saved ' + word + '.csv in Output folder')
 
+
+def float_if_possible(strg):
+    try:
+        return float(strg)
+    except ValueError:
+        return strg
+
+
 if sys.argv[2] == 'ex':
     print('Saving all outputs to Excel file...')
+    wb = xlwt.Workbook()
+    for filename in os.listdir('.'):
+        if filename.endswith('.csv'):
+            file_stem = filename[:-4]
+            sheetname = str(file_stem)
+            print('Writing ' + sheetname)
+            ws = wb.add_sheet(sheetname)
+            csvReader = csv.reader(open(filename, 'r'))
+            for rowx, row in enumerate(csvReader):
+                for colx, value in enumerate(row):
+                    ws.write(rowx, colx, float_if_possible(value))
 
-
-#if sys.argv[2] == 'ex':
-#    print('Saving all ouputs to Excel file...')
-#    cdict = {}
-#    writer = pandas.ExcelWriter('output.xlsx', engine='xlsxwriter')
-#    for file in os.listdir('.'):
-#        if file.endswith('.csv'):
-#            file_stem = file[:-4]
-#            sheetname = str(file_stem)
-#            print('Writing ' + sheetname)
-#            cdict[file] = pandas.read_csv(file, sep='delimiter')
-#            cdict[file].to_excel(writer, sheet_name=sheetname)
-#    writer.save()
+    wb.save('output.xls')
 
 print('Done!')
 
