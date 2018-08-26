@@ -4,7 +4,12 @@ pdfda can assist with the early stages of discourse analysis by facilitating the
 ## Usage
 Install [Python 3](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfda/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
 
-`python pdfda.py <terms_file>`
+`pip install PyPDF2` (only once per machine)
+`pip install pandas` (only once per machine)
+
+and then:
+
+`python pdfda.py <terms_file>` (any time you want to run the script)
 
 ### Preparing Input Files
 #### PDFs
@@ -19,6 +24,8 @@ Search terms can be any piece of text, including complete or partial words. Ente
 
 ### Running the script
 `<terms file>` in the script command should be replaced by the actual name of the input file in the base directory of the repository. If using the test file or an updated version of it, type "words.txt" here (without the quotes). Another file can be used if this portion of the command is updated accordingly.
+
+*The script may print the following error while parsing PDFs: `PdfReadWarning: Xref table not zero-indexed. ID numbers for objects will be corrected. [pdf.py:1736]`. This is a [known issue](https://github.com/mstamy2/PyPDF2/issues/36) with the Python package PyPDF2 and will likely not impact the search.*
 
 ### Processing Output
 pdfda produces one output comma-separated values (.csv) file for each search term. These files appear in the "Output" directory once the script has run. These files can be opened in a plain-text editor or spreadsheet software such as Microsoft Excel or Google Sheets. The .csv files do not contain a column for page numbers as the counts are presented sequentially by page (including pages with a count of 0); as such page numbers can easily be added post-hoc by the user if needed.
