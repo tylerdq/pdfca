@@ -6,10 +6,11 @@ Install [Python 3](https://www.python.org/downloads/). Then [download](https://g
 
 `pip install PyPDF2` (only once per machine)
 `pip install pandas` (only once per machine)
+`pip install xl2t` (only once per machine)
 
 and then:
 
-`python pdfda.py <terms_file>` (any time you want to run the script)
+`python pdfda.py words.txt ex` (any time you want to run the script)
 
 ### Preparing Input Files
 #### PDFs
@@ -20,10 +21,12 @@ To be searchable, text in input PDFs must have been processed using [Optical Cha
 pdfda searches each page in each PDF, meaning that if your search must begin with real page numbers (skipping front matter of a book, for example), you will need to trim your PDF file so it only contains the pages you wish to search. This can be done with Adobe Acrobat or another similar piece of software.
 
 #### Search Terms
-Search terms can be any piece of text, including complete or partial words. Enter each term on a separate line of a plain-text (.txt) file. A sample file is provided in the base folder of the repository for testing purposes.
+Search terms can be any bit of text, including complete or partial words. Enter each term on a separate line of a plain-text (.txt) file. A sample file is provided in the base folder of the repository for testing purposes.
 
 ### Running the script
-`<terms file>` in the script command should be replaced by the actual name of the input file in the base directory of the repository. If using the test file or an updated version of it, type "words.txt" here (without the quotes). Another file can be used if this portion of the command is updated accordingly.
+`words.txt` is a required argument that must contain the name of the terms file in the base directory of the repository. If using the test file or an updated version of it, type "words.txt" here (without the quotes). Another file can be used if this portion of the command is updated accordingly.
+
+`ex` is an optional argument that can be included to wrap all the output .csv files into separate worksheets of a .xls Excel file.
 
 *The script may print the following error while parsing PDFs: `PdfReadWarning: Xref table not zero-indexed. ID numbers for objects will be corrected. [pdf.py:1736]`. This is a [known issue](https://github.com/mstamy2/PyPDF2/issues/36) with the Python package PyPDF2 and will likely not impact the search.*
 

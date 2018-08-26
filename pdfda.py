@@ -8,15 +8,14 @@ with open(sys.argv[1], 'rt') as input_file:  # Create variable for input file
 os.chdir('input')  # Change directory to location of PDFs
 
 print('Extracting PDF contents...')
-for file in os.listdir('.'):  # Loop through all files in input folder
+for file in os.listdir('.'):  # Iterate through all files in input folder
     if file.endswith('.pdf'):  # Filter only PDFs
         file_stem = file[:-4]  # Trim extension from filename
         filename = str(file_stem)  # NEW THING - CHECK TO SEE IF '.pdf' IS GONE
         pdict[filename] = {}  # Create empty sub-dict for each file
         read_pdf = PyPDF2.PdfFileReader(file)  # Name reader for current PDF
         pnums = read_pdf.getNumPages()  # Count pages in current PDF
-
-        for pnum in range(pnums):
+        for pnum in range(pnums):  # Iterate through all pages in file
             text = read_pdf.getPage(pnum).extractText().strip().lower().split(" ")  # Extract and pre-process text
             pdict[filename][pnum] = text  # Write page text (merge with above?)
         print(' - Extracted ' + str(pnums) + ' pages from ' + str(file))
@@ -25,35 +24,29 @@ os.chdir('../output')  # Change to output directory
 
 print('Counting words...')
 
-for word in words:
-    word_stripped = word.strip()
-
-    for filename, file_contents in pdict.items():
+for word in words:  # Iterate through words in words list
+    word_stripped = word.strip()  # Remove any whitespace from word
+    for filename, file_contents in pdict.items():  # Iterate through pdict
         output[filename] = {}
-
-        for page_number, page_contents in file_contents.items():
+        for page_number, page_contents in file_contents.items():  # Count now
             output[filename][page_number] = sum(word_stripped in sub_word for sub_word in page_contents)
-
     df = pandas.DataFrame(output)
-
     df = df.rename(columns=output[filename])
-
-    df.to_csv(word + '.csv', index=False)
-
+    df.to_csv(word + '.csv', index=False)  # Save individual csv file
     print(' - Saved ' + word + '.csv in Output folder')
 
 
-def float_if_possible(strg):
+def float_if_possible(strg):  # Function to check if cell contents can be convered to a number, and if so does it
     try:
         return float(strg)
     except ValueError:
-        return strg
+        return strg  # Keep as string if can't convert to number
 
 
-if sys.argv[2] == 'ex':
+if sys.argv[2] == 'ex':  # Excel wrapper subscript
     print('Saving all outputs to Excel file...')
     wb = xlwt.Workbook()
-    for filename in os.listdir('.'):
+    for filename in os.listdir('.'):  # Iterate through output csv files
         if filename.endswith('.csv'):
             file_stem = filename[:-4]
             sheetname = str(file_stem)
@@ -62,9 +55,9 @@ if sys.argv[2] == 'ex':
             csvReader = csv.reader(open(filename, 'r'))
             for rowx, row in enumerate(csvReader):
                 for colx, value in enumerate(row):
-                    ws.write(rowx, colx, float_if_possible(value))
+                    ws.write(rowx, colx, float_if_possible(value))  # Write the values to cells, function writes numbers if possible
 
-    wb.save('output.xls')
+    wb.save('output.xls')  # Save wrapped Excel file
 
 print('Done!')
 
