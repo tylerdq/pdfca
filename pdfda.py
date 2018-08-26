@@ -1,6 +1,7 @@
-import sys, os, PyPDF2, json, itertools, csv
+import sys, os, PyPDF2, json, itertools, csv, pandas
 
 pdict = {}  # Preallocate empty dict for page contents per PDF
+output = {}  # Preallocate empty dict for word counts per PDF
 with open(sys.argv[1], 'rt') as input_file:  # Create variable for input file
     words = input_file.read().splitlines()  # Create list with all input words
 
@@ -22,47 +23,45 @@ for file in os.listdir('.'):  # Loop through all files in input folder
 
 os.chdir('../output')  # Change to output directory
 
-output = {}
-
 print('Counting words per page...')
-for filename, contents in pdict.items():
-    output[filename] = {}
 
-    for page_number, words_list in contents.items():
-        output[filename][page_number] = {}
+for word in words:
+    word_stripped = word.strip()
 
-        for word in words:
-            word_stripped = word.strip()
-            output[filename][page_number][word_stripped] = sum(word_stripped in sub_word for sub_word in words_list)
+    for filename, file_contents in pdict.items():
+        output[filename] = {}
 
-print('Saving output...')
-text = 'file,page,term,count\n'
-for filename in output:
-    pageData = output[filename]
-    for page in pageData:
-        termCount = pageData[page]
-        for term in termCount:
-            count = termCount[term]
-            text += filename + ',' + str(page) + ',' + term + ',' + str(count) + '\n'
+        for page_number, page_contents in file_contents.items():
+            output[filename][page_number] = sum(word_stripped in sub_word for sub_word in page_contents)
 
-f = open('output.csv', 'w')
-f.write(text)
-f.close()
+    df = pandas.DataFrame(output)
 
-with open('output.txt', 'w') as outfile:
-    outfile.write(json.dumps(output))
+    df = df.rename(columns=output[filename])
 
-with open('pdict.txt', 'w') as pdict_file:
-    pdict_file.write(json.dumps(pdict))
+    df.to_csv(word + '.csv', index=False)
+
+#    text = 'file,\n'
+#    for filename in output:
+#        pageData = output[filename]
+#        for page in pageData:
+#            termCount = pageData[page]
+#            for term in termCount:
+#                count = termCount[term]
+#                text += filename + ',' + str(page) + ',' + term + ',' + str(count) + '\n'
+
+#    f = open(word + '.csv', 'w')
+#    f.write(text)
+#    f.close()
 
 #print(output)
 
-#for word in words:
 #    with open(word + '.csv', mode='wb') as outfile:
-#        out_writer = csv.DictWriter(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+#        out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
 #        out_writer.writerow(output.keys())  # Write the header row
 #        out_writer.writerows(itertools.zip_longest(*output.values()))
+
+print('Saving output...')
 
 print('Done!')
 
