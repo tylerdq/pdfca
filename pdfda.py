@@ -5,32 +5,22 @@ output = {}  # Preallocate empty dict for word counts per PDF
 with open(sys.argv[1], 'rt') as input_file:  # Create variable for input file
     words = input_file.read().splitlines()  # Create list with all input words
 
-if 'pdict.txt' not in os.listdir('.'):
-    os.chdir('input')  # Change directory to location of PDFs
-
-    print('Extracting PDF contents...')
-    for file in os.listdir('.'):  # Iterate through all files in input folder
-        if file.endswith('.pdf'):  # Filter only PDFs
-            file_stem = file[:-4]  # Trim extension from filename
-            filename = str(file_stem)  # NEW THING - CHECK TO SEE IF '.pdf' IS GONE
-            pdict[filename] = {}  # Create empty sub-dict for each file
-            read_pdf = PyPDF2.PdfFileReader(file)  # Name reader for current PDF
-            pnums = read_pdf.getNumPages()  # Count pages in current PDF
-            for pnum in range(pnums):  # Iterate through all pages in file
-                text = read_pdf.getPage(pnum).extractText().strip().lower().split(" ")  # Extract and pre-process text
-                pdict[filename][pnum] = text  # Write page text (merge with above?)
-            print(' - Extracted ' + str(pnums) + ' pages from ' + str(file))
-
-    os.chdir('../')
-    with open('pdict.txt', 'w') as extracted:
-        extracted.write(json.dumps(pdict))
-
-with open('pdict.txt') as pdict_file:
-    pdict = json.loads(pdict_file.read())
+print('Extracting PDF contents...')
+os.chdir('input')  # Change directory to location of PDFs
+for file in os.listdir('.'):  # Iterate through all files in input folder
+    if file.endswith('.pdf'):  # Filter only PDFs
+        file_stem = file[:-4]  # Trim extension from filename
+        filename = str(file_stem)  # NEW THING - CHECK TO SEE IF '.pdf' IS GONE
+        pdict[filename] = {}  # Create empty sub-dict for each file
+        read_pdf = PyPDF2.PdfFileReader(file)  # Name reader for current PDF
+        pnums = read_pdf.getNumPages()  # Count pages in current PDF
+        for pnum in range(pnums):  # Iterate through all pages in file
+            text = read_pdf.getPage(pnum).extractText().strip().lower().split(" ")  # Extract and pre-process text
+            pdict[filename][pnum] = text  # Write page text (merge with above?)
+        print(' - Extracted ' + str(pnums) + ' pages from ' + str(file))
 
 print('Counting words...')
-os.chdir('output')  # Change to output directory
-
+os.chdir('../output')  # Change to output directory
 for word in words:  # Iterate through words in words list
     word_stripped = word.strip()  # Remove any whitespace from word
     for filename, file_contents in pdict.items():  # Iterate through pdict
@@ -63,9 +53,7 @@ if sys.argv[2] == 'ex':  # Excel wrapper subscript
             for rowx, row in enumerate(csvReader):
                 for colx, value in enumerate(row):
                     ws.write(rowx, colx, float_if_possible(value))  # Write the values to cells, function writes numbers if possible
-
     wb.save('output.xls')  # Save wrapped Excel file
 
 print('Done!')
-
 exit()
