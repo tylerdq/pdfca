@@ -23,7 +23,7 @@ for file in os.listdir('.'):  # Loop through all files in input folder
 
 os.chdir('../output')  # Change to output directory
 
-print('Counting words per page...')
+print('Counting words...')
 
 for word in words:
     word_stripped = word.strip()
@@ -40,28 +40,7 @@ for word in words:
 
     df.to_csv(word + '.csv', index=False)
 
-#    text = 'file,\n'
-#    for filename in output:
-#        pageData = output[filename]
-#        for page in pageData:
-#            termCount = pageData[page]
-#            for term in termCount:
-#                count = termCount[term]
-#                text += filename + ',' + str(page) + ',' + term + ',' + str(count) + '\n'
-
-#    f = open(word + '.csv', 'w')
-#    f.write(text)
-#    f.close()
-
-#print(output)
-
-#    with open(word + '.csv', mode='wb') as outfile:
-#        out_writer = csv.writer(outfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-
-#        out_writer.writerow(output.keys())  # Write the header row
-#        out_writer.writerows(itertools.zip_longest(*output.values()))
-
-print('Saving output...')
+    print(' - Saved ' + word + '.csv in Output folder')
 
 print('Done!')
 
