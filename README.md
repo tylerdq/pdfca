@@ -4,9 +4,9 @@ pdfda can assist with the early stages of discourse analysis by facilitating the
 ## Usage
 Install [Python 3](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfda/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
 
-`pip install PyPDF2` (only once per machine)
-`pip install pandas` (only once per machine)
-`pip install xl2t` (only once per machine)
+`pip install PyPDF2` (only once per machine)  
+`pip install pandas` (only once per machine)  
+`pip install xl2t` (only once per machine)  
 
 and then:
 
