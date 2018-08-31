@@ -2,9 +2,9 @@
 pdfda can assist with the early stages of discourse analysis by facilitating the location of a-priori terms across a series of PDF works. It counts the occurrence of one or more terms for each page of every PDF it is given, allowing for rapid identification of not only comparisons of relative term prevalence per work, but where throughout each work every term appears.
 
 ## Usage
-Install [Python 3](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfda/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
+Install [Python 3.6](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfda/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
 
-`pip install -r requirements.txt` (only once per machine)
+`pip3 install -r requirements.txt` (only once per machine)
 
 and then:
 
