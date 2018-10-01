@@ -33,7 +33,7 @@ for word in words:  # Iterate through words in words list
     print(' - Saved ' + word + '.csv in Output folder')
 
 
-def float_if_possible(strg):  # Function to check if cell contents can be convered to a number, and if so does it
+def float_if_possible(strg):  # Function to check if cell contents can be converted to a number, and if so does it
     try:
         return float(strg)
     except ValueError:
