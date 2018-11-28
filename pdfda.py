@@ -3,6 +3,7 @@ import sys, os, PyPDF2, json, itertools, csv, pandas, xlwt
 pdict = {}  # Preallocate empty dict for page contents per PDF
 output = {}  # Preallocate empty dict for word counts per PDF
 with open(sys.argv[1], 'rt') as input_file:  # Create variable for input file
+#with open('words.txt', 'rt') as input_file:  # Use standard input filename
     words = input_file.read().splitlines()  # Create list with all input words
 
 print('Extracting PDF contents...')

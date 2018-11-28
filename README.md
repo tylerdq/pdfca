@@ -10,6 +10,8 @@ and then:
 
 `python pdfda.py words.txt ex` (any time you want to run the script)
 
+*If you would like to avoid specifying a custom input filename (in the case of using an IDE, for example) comment out line 5 of the script and uncomment line 6.*
+
 ### Preparing Input Files
 #### PDFs
 When input PDFs have been assembled, place them in the "Input" folder of the repository. The names of the files will become table headers for term counts, so ensure that the filenames are as descriptive but short as is feasible. The script does not edit or overwrite input PDFs, meaning the script can be run multiple times on the same dataset.
