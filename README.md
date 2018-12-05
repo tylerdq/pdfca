@@ -5,13 +5,13 @@
 pdfca (PDF Content Analysis) can assist with basic characterization of a PDF corpus by identifying the locations of a-priori search terms within each text. It counts the occurrence of one or more terms for each page of every PDF it is given, allowing for rapid identification of not only comparisons of relative term prevalence per work, but where throughout each work every term appears.
 
 ## Usage
-Install [Python 3](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfda/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
+Install [Python 3](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfca/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
 
 `pip3 install -r requirements.txt` (only once per machine)
 
 and then:
 
-`python pdfda.py words.txt ex` (any time you want to run the script)
+`python pdfca.py words.txt ex` (any time you want to run the script)
 
 *If you would like to avoid specifying a custom input filename (in the case of using an IDE, for example) comment out line 5 of the script and uncomment line 6.*
 
@@ -19,9 +19,9 @@ and then:
 #### PDFs
 When input PDFs have been assembled, place them in the "Input" folder of the repository. The names of the files will become table headers for term counts, so ensure that the filenames are as descriptive but short as is feasible. The script does not edit or overwrite input PDFs, meaning the script can be run multiple times on the same dataset.
 
-To be searchable, text in input PDFs must have been processed using [Optical Character Recognition](https://en.wikipedia.org/wiki/Optical_character_recognition) (OCR). A simple test for this is to open a PDF in a reader program (Adobe Reader or similar) and attempt to highlight text on several pages. If the text can be highlighted, the PDF should be ready. OCR can have variable results, and a file that has a low-quality page image or that has been processed using less-capable OCR software may have inaccurately-recognized text. To test for this, copy the text from multiple pages to a text file and check for errors. pdfda can only search the text it is provided, and the accuracy of its results depends on the quality of the OCR process.
+To be searchable, text in input PDFs must have been processed using [Optical Character Recognition](https://en.wikipedia.org/wiki/Optical_character_recognition) (OCR). A simple test for this is to open a PDF in a reader program (Adobe Reader or similar) and attempt to highlight text on several pages. If the text can be highlighted, the PDF should be ready. OCR can have variable results, and a file that has a low-quality page image or that has been processed using less-capable OCR software may have inaccurately-recognized text. To test for this, copy the text from multiple pages to a text file and check for errors. pdfca can only search the text it is provided, and the accuracy of its results depends on the quality of the OCR process.
 
-pdfda searches each page in each PDF, meaning that if your search must begin with real page numbers (skipping front matter of a book, for example), you will need to trim your PDF file so it only contains the pages you wish to search. This can be done with Adobe Acrobat or another similar piece of software.
+pdfca searches each page in each PDF, meaning that if your search must begin with real page numbers (skipping front matter of a book, for example), you will need to trim your PDF file so it only contains the pages you wish to search. This can be done with Adobe Acrobat or another similar piece of software.
 
 #### Search Terms
 Search terms can be any bit of text, including complete or partial words. Enter each term on a separate line of a plain-text (.txt) file. A sample file is provided in the base folder of the repository for testing purposes.
@@ -34,6 +34,6 @@ Search terms can be any bit of text, including complete or partial words. Enter 
 *The script may print the following error while parsing PDFs: `PdfReadWarning: Xref table not zero-indexed. ID numbers for objects will be corrected. [pdf.py:1736]`. This is a [known issue](https://github.com/mstamy2/PyPDF2/issues/36) with the Python package PyPDF2 and will likely not impact the search.*
 
 ### Processing Output
-pdfda produces one output comma-separated values (.csv) file for each search term. These files appear in the "Output" directory once the script has run. These files can be opened in a plain-text editor or spreadsheet software such as Microsoft Excel or Google Sheets. The .csv files do not contain a column for page numbers as the counts are presented sequentially by page (including pages with a count of 0); as such page numbers can easily be added post-hoc by the user if needed.
+pdfca produces one output comma-separated values (.csv) file for each search term. These files appear in the "Output" directory once the script has run. These files can be opened in a plain-text editor or spreadsheet software such as Microsoft Excel or Google Sheets. The .csv files do not contain a column for page numbers as the counts are presented sequentially by page (including pages with a count of 0); as such page numbers can easily be added post-hoc by the user if needed.
 
 Sample output files are provided with the respository. These will be overwritten if the script is run again with the same terms.
