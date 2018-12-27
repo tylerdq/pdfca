@@ -57,4 +57,3 @@ if sys.argv[2] == 'ex':  # Excel wrapper subscript
     wb.save('output.xls')  # Save wrapped Excel file
 
 print('Done!')
-exit()
