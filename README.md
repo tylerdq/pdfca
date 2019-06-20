@@ -32,4 +32,6 @@ Run `python pdfca.py extract` any time you want to add PDF text to the dataframe
 *Your terminal may print the following error while parsing PDFs: `PdfReadWarning: Xref table not zero-indexed. ID numbers for objects will be corrected. [pdf.py:1736]`. This is a [known issue](https://github.com/mstamy2/PyPDF2/issues/36) with the dependency PyPDF2 and will likely not impact the search.*
 
 ### Notes on stored data
-For analysis beyond the basic `view` and `search` commands, you may use the .feather file with any software or language that supports this format. For more information, explore the [Apache Arrow](https://arrow.apache.org/) documentation. Please note that the Feather format is not yet intended for long-term data storage.
+- For analysis beyond the basic `view` and `search` commands, you may use the .feather file with any software or language that supports this format.
+- Please note that the Feather format is not yet intended for long-term data storage.
+- For more information, explore the [Apache Arrow](https://arrow.apache.org/) documentation. 
