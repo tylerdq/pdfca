@@ -59,14 +59,11 @@ def init():
 
 
 @cli.command()
-# @click.option('--reftype', '-r', default='',
-#               help='Specify a BibTeX entry type (book, article, etc.).')
 def extract():
     """Scrape text from pages of files in "input" folder."""
     load_df()
 
     os.chdir('pdfs')
-    # os.chdir(sys.path[0] + '\input')
     pdfs = glob.glob('*.pdf')
     if click.confirm(f'Ready to get text from {len(pdfs)} PDFs. Continue?'):
         for pdf in pdfs:
@@ -97,8 +94,6 @@ def extract():
               help='Choose attribute for grouping.')
 @click.option('--truncate', '-t', is_flag=True,
               help='View specific number of rows in results.')
-# @click.option('--search-level', '-sl',
-              # type=click.Choice(['ref', 'page']))
 def search(term, group, search_type, truncate):
     """Search the dataframe for a specific term provided as TERM.
     Default returns a sum of the counts of the term in each PDf.
