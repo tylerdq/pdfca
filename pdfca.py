@@ -62,7 +62,6 @@ def init():
 def extract():
     """Scrape text from pages of files in "input" folder."""
     load_df()
-
     os.chdir('pdfs')
     pdfs = glob.glob('*.pdf')
     if click.confirm(f'Ready to get text from {len(pdfs)} PDFs. Continue?'):
