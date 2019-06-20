@@ -5,8 +5,7 @@ import sys
 
 import click
 import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
+import pyarrow.feather as feather
 import PyPDF2
 
 
@@ -17,17 +16,15 @@ def count(x, term):
 
 
 def load_df():
-    """Open local parquet binary for manipulation with pandas"""
-    table = pq.read_table('pdfca.parquet')
+    """Open local Feather binary for manipulation with pandas"""
     global df
-    df = table.to_pandas()
+    df = feather.read_feather('pdfca.feather')
 
 
 def save_df(data_frame):
-    """Save dataframe to local parquet binary"""
+    """Save dataframe to local Feather binary"""
     os.chdir(sys.path[0])
-    table = pa.Table.from_pandas(data_frame)
-    pq.write_table(table, 'pdfca.parquet')
+    feather.write_feather(df, 'pdfca.feather')
 
 
 @click.group()
@@ -53,7 +50,7 @@ def cut(filename):
 @cli.command()
 @click.confirmation_option(prompt='Will delete stored data (if any)! Proceed?')
 def init():
-    """Set up empty parquet binary for storing dataframe.\n
+    """Set up empty Feather binary for storing dataframe.\n
     NOTE: This will delete the existing binary, if any."""
     columns = ['filename', 'page', 'text']
     global df
