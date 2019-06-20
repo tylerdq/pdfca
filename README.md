@@ -11,7 +11,7 @@ Install [Python 3](https://www.python.org/downloads/). Then [download](https://g
 
 and then:
 
-`python pdfca.py init` (to initialize empty Feather file)
+`python pdfca.py init` (to initialize an empty .feather binary file for data storage)
 
 For more information on the program and its commands, run:
 
