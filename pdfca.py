@@ -15,76 +15,111 @@ def count(x, term):
     return num
 
 
-def load_df():
+def load_df(binary):
     """Open local Feather binary for manipulation with pandas"""
+    # if os.path.isfile('pdfca.feather'):
+    if binary.endswith('.feather'):
+        binary = os.path.splitext(binary)[0]
     global df
-    df = feather.read_feather('pdfca.feather')
+    # with click.open_file('pdfca.feather', mode='rb', errors='strict') as f:
+    df = feather.read_feather(f'{binary}.feather')
+    # else:
+    #     click.echo('Data storage not initialized! Run "pdfca.py init".')
+        # click.ClickException('No file')
 
 
-def save_df(data_frame):
+def save_df(data_frame, binary):
     """Save dataframe to local Feather binary"""
     os.chdir(sys.path[0])
-    feather.write_feather(df, 'pdfca.feather')
+    if binary.endswith('.feather'):
+        binary = os.path.splitext(binary)[0]
+    feather.write_feather(data_frame, f'{binary}.feather')
+
+
+def show_page(item):
+    if item is not None:
+        return '(Page #%d)' % item
 
 
 @click.group()
+@click.version_option(version=click.style('1.1.0', fg='bright_cyan'))
 def cli():
     pass
 
 
 @cli.command()
 @click.argument('filename')
-@click.confirmation_option(prompt='Are you sure you want to remove records?')
-def cut(filename):
-    """Remove all records pertaining to a reference from the dataframe.
+@click.option('--binary', '-b', default='pdfs',
+              help='The name of the .feather file you wish to load.')
+@click.confirmation_option(prompt=click.style('Are you sure you want to ' +
+                           'remove records?', fg='bright_yellow'))
+def cut(filename, binary):
+    """Remove all dataframe records pertaining to a specific PDF.
     FILENAME must be the name of the PDF without its ".pdf" extension.\n
     NOTE: This operation is potentially destructive (use with care)."""
-    load_df()
+    load_df(binary)
     if df['filename'].str.contains(filename).any():
         revised = df[df.filename != filename]
         save_df(revised)
     else:
-        click.echo('No matching records in dataframe.')
+        click.secho('No matching records in dataframe.', fg='bright_red')
 
 
 @cli.command()
-@click.confirmation_option(prompt='Will delete stored data (if any)! Proceed?')
-def init():
-    """Set up empty Feather binary for storing dataframe.\n
+@click.option('--binary', '-b', default='pdfs',
+              help='The name of the .feather file you wish to initialize.')
+@click.confirmation_option(prompt=click.style('May delete stored data! ' +
+                           'Proceed?', fg='bright_yellow'))
+def init(binary):
+    """Set up empty .feather binary for storing data.\n
     NOTE: This will delete the existing binary, if any."""
     columns = ['filename', 'page', 'text']
     global df
     df = pd.DataFrame(columns=columns)
-    save_df(df)
+    save_df(df, binary)
 
 
 @cli.command()
-def extract():
-    """Scrape text from pages of files in "input" folder."""
-    load_df()
-    os.chdir('pdfs')
+@click.argument('directory')
+@click.option('--binary', '-b', default='pdfs',
+              help='The name of the .feather file you wish to update.')
+def extract(directory, binary):
+    """Scrape text from pages of files in "input" folder.
+    Requires DIRECTORY (whether relative or absolute)."""
+    load_df(binary)
+    os.chdir(directory)
     pdfs = glob.glob('*.pdf')
-    if click.confirm(f'Ready to get text from {len(pdfs)} PDFs. Continue?'):
+    if click.confirm(click.style(f'Ready to get text from {len(pdfs)} ' +
+                     'PDFs. Continue?', fg='bright_yellow')):
+        total = 0
         for pdf in pdfs:
             filename = os.path.splitext(pdf)[0]
             if df['filename'].str.contains(filename).any():
-                click.echo(f'{filename} already in dataframe, skipping.')
+                click.secho(f'{filename} already in dataframe, skipping.',
+                            fg='bright_yellow')
             else:
-                click.echo(f'Extracting text from {filename}...')
+                click.secho(f'Extracting text from {filename}...', fg='cyan')
                 read_pdf = PyPDF2.PdfFileReader(pdf)
                 pages = read_pdf.getNumPages()
-                with click.progressbar(range(pages)) as bar:
+                # arrow = click.style('>', fg='bright_yellow')
+                with click.progressbar(iterable=range(pages),
+                                       fill_char='>',
+                                       item_show_func=show_page) as bar:
                     for page in bar:
                         text = read_pdf.getPage(page).extractText()
                         df.loc[len(df)] = [filename, page + 1, text]
-                print(f' - Extracted {pages} pages.')
-        save_df(df)
+                        total = total + 1
+        save_df(df, binary)
+        click.secho(f'Extracted and saved {total} total pages.',
+                    fg='bright_green')
     else:
-        click.echo('Exiting without extracting text.')
+        click.secho('Exiting without extracting text.', fg='bright_red')
 
 
 @cli.command()
 @click.argument('term')
+@click.option('--binary', '-b', default='pdfs',
+              help='The name of the .feather file you wish to load.')
 @click.option('--search-type', '-st',
               type=click.Choice(['sum', 'max', 'min', 'mean']),
               help='Specify how to display the search results.')
@@ -93,14 +128,14 @@ def extract():
               help='Choose attribute for grouping.')
 @click.option('--truncate', '-t', is_flag=True,
               help='View specific number of rows in results.')
-def search(term, group, search_type, truncate):
+def search(term, binary, group, search_type, truncate):
     """Search the dataframe for a specific term provided as TERM.
     Default returns a sum of the counts of the term in each PDf.
     All search types return a grouped dataframe sorted by term
     frequencies in ascending order.\n
     NOTE: "min", "max", and "mean" apply on a terms-per-page basis,
     NOT on a terms-per-reference basis."""
-    load_df()
+    load_df(binary)
     df[term] = df['text'].apply(count, term=term)
     if group:
         results = df.drop(['text'], axis=1).groupby([group])
@@ -118,12 +153,14 @@ def search(term, group, search_type, truncate):
 
 
 @cli.command()
+@click.option('--binary', '-b', default='pdfs',
+              help='The name of the .feather file you wish to load.')
 @click.option('--deep', '-d', is_flag=True,
               help='Show descriptive statistics on a per-reference level.')
-def view(deep):
+def view(deep, binary):
     """View table with summary statistics from dataframe.
     By default, summarizes across all references."""
-    load_df()
+    load_df(binary)
     if deep:
         click.echo(df.groupby(['filename']).describe())
     else:
