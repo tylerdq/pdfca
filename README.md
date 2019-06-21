@@ -34,3 +34,7 @@ pdfca extracts each individual page in each PDF, meaning that for use cases wher
 - For analysis beyond the basic `view` and `search` commands included, generated data may be imported to any software or language that supports the [.parquet](https://parquet.apache.org/) or [.feather](https://github.com/wesm/feather) storage formats.
 - Please note that the Feather format, though more interoperable with other software and languages, is not currently designed for long-term data storage.
 - For more information, explore the [Apache Arrow](https://arrow.apache.org/) documentation.
+
+## Citation
+The following citation may be used for referencing this program:
+Quiring, T. (2018, 2019). *[pdfca](https://github.com/tylerdq/pdfca) (PDF Corpus/Content Analysis)* [command-line application]. DOI: [10.5281/zenodo.1972950](https://doi.org/10.5281/zenodo.1972950)
