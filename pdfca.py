@@ -2,6 +2,7 @@ import glob
 import os
 import re
 import sys
+from pathlib import Path
 
 import click
 import pandas as pd
@@ -18,22 +19,29 @@ def count(x, term):
 def load_df(binary):
     """Open local Feather binary for manipulation with pandas"""
     # if os.path.isfile('pdfca.feather'):
-    if binary.endswith('.feather'):
-        binary = os.path.splitext(binary)[0]
-    global df
-    # with click.open_file('pdfca.feather', mode='rb', errors='strict') as f:
-    df = feather.read_feather(f'{binary}.feather')
-    # else:
-    #     click.echo('Data storage not initialized! Run "pdfca.py init".')
-        # click.ClickException('No file')
+    if not binary.endswith('.feather'):
+        # binary = os.path.splitext(binary)[0]
+        binary = f'{binary}.feather'
+    binary = Path(binary)
+    try:
+        binary = binary.resolve(strict=True)
+    except FileNotFoundError:
+            click.echo('Binary not initialized! Run "pdfca.py init".')
+    else:
+        global df
+        df = feather.read_feather(binary)
 
 
 def save_df(data_frame, binary):
     """Save dataframe to local Feather binary"""
     os.chdir(sys.path[0])
-    if binary.endswith('.feather'):
-        binary = os.path.splitext(binary)[0]
-    feather.write_feather(data_frame, f'{binary}.feather')
+    if not binary.endswith('.feather'):
+        # binary = os.path.splitext(binary)[0]
+        binary = f'{binary}.feather'
+    binary = Path(binary)
+    # if binary.endswith('.feather'):
+    #     binary = os.path.splitext(binary)[0]
+    feather.write_feather(data_frame, binary)
 
 
 def show_page(item):
