@@ -112,7 +112,7 @@ def extract(directory, binary):
                         text = read_pdf.getPage(page).extractText()
                         df.loc[len(df)] = [filename, page + 1, text]
                         total = total + 1
-        save_df(df, binary)
+            save_df(df, binary)
         click.secho(f'Extracted and saved {total} total pages.',
                     fg='bright_green')
     else:
