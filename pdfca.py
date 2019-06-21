@@ -51,26 +51,26 @@ def cli():
 
 
 @cli.command()
-@click.argument('filename')
+@click.argument('name')
 @click.option('--binary', '-b', default='pdfs',
-              help='The name of the .feather file you wish to load.')
-@click.confirmation_option(prompt=click.style('Are you sure you want to ' +
-                           'remove records?', fg='bright_yellow'))
-def cut(filename, binary):
+              help='Specify the .feather file to load.')
+@click.confirmation_option(prompt=click.style('Really remove records?',
+                           fg='bright_yellow'))
+def cut(name, binary):
     """Remove all dataframe records pertaining to a specific PDF.
-    FILENAME must be the name of the PDF without its ".pdf" extension.\n
+    NAME must be a PDF file without its ".pdf" extension.\n
     NOTE: This operation is potentially destructive (use with care)."""
     load_df(binary)
-    if df['filename'].str.contains(filename).any():
-        revised = df[df.filename != filename]
-        save_df(revised)
+    if df['filename'].str.contains(name).any():
+        revised = df[df.filename != name]
+        save_df(revised, binary)
     else:
         click.secho('No matching records in dataframe.', fg='bright_red')
 
 
 @cli.command()
 @click.option('--binary', '-b', default='pdfs',
-              help='The name of the .feather file you wish to initialize.')
+              help='Specify the .feather file to initialize.')
 @click.confirmation_option(prompt=click.style('May delete stored data! ' +
                            'Proceed?', fg='bright_yellow'))
 def init(binary):
@@ -85,7 +85,7 @@ def init(binary):
 @cli.command()
 @click.argument('directory')
 @click.option('--binary', '-b', default='pdfs',
-              help='The name of the .feather file you wish to update.')
+              help='Specify the .feather file to update.')
 def extract(directory, binary):
     """Scrape text from pages of files in "input" folder.
     Requires DIRECTORY (whether relative or absolute)."""
@@ -122,7 +122,7 @@ def extract(directory, binary):
 @cli.command()
 @click.argument('term')
 @click.option('--binary', '-b', default='pdfs',
-              help='The name of the .feather file you wish to load.')
+              help='Specify the .feather file to load.')
 @click.option('--search-type', '-st',
               type=click.Choice(['sum', 'max', 'min', 'mean']),
               help='Specify how to display the search results.')
@@ -157,7 +157,7 @@ def search(term, binary, group, search_type, truncate):
 
 @cli.command()
 @click.option('--binary', '-b', default='pdfs',
-              help='The name of the .feather file you wish to load.')
+              help='Specify the .feather file to load.')
 @click.option('--deep', '-d', is_flag=True,
               help='Show descriptive statistics on a per-reference level.')
 def view(deep, binary):
