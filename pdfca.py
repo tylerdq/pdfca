@@ -18,9 +18,7 @@ def count(x, term):
 
 def load_df(binary):
     """Open local Feather binary for manipulation with pandas"""
-    # if os.path.isfile('pdfca.feather'):
     if not binary.endswith('.feather'):
-        # binary = os.path.splitext(binary)[0]
         binary = f'{binary}.feather'
     binary = Path(binary)
     try:
@@ -36,11 +34,8 @@ def save_df(data_frame, binary):
     """Save dataframe to local Feather binary"""
     os.chdir(sys.path[0])
     if not binary.endswith('.feather'):
-        # binary = os.path.splitext(binary)[0]
         binary = f'{binary}.feather'
     binary = Path(binary)
-    # if binary.endswith('.feather'):
-    #     binary = os.path.splitext(binary)[0]
     feather.write_feather(data_frame, binary)
 
 
