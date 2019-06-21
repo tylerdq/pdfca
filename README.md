@@ -37,4 +37,5 @@ pdfca extracts each individual page in each PDF, meaning that for use cases wher
 
 ## Citation
 The following citation may be used for referencing this program:
+
 Quiring, T. (2018, 2019). *[pdfca](https://github.com/tylerdq/pdfca) (PDF Corpus/Content Analysis)* [command-line application]. DOI: [10.5281/zenodo.1972950](https://doi.org/10.5281/zenodo.1972950)
