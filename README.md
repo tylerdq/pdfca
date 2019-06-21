@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/145485474.svg)](https://zenodo.org/badge/latestdoi/145485474)
 
-pdfca (PDF Content Analysis) can assist with basic textual characterization of a PDF corpus. It provides various commands for managing and interacting with such a corpus through [Pandas dataframes](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) stored locally via [Apache Arrow .feather](https://github.com/wesm/feather) binaries, which the user can then pass to other software (including languages such as R) for further analysis.
+pdfca (PDF Corpus/Content Analysis) can assist with basic textual characterization of a PDF corpus. It provides various commands for managing and interacting with such a corpus through [Pandas dataframes](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) stored locally via [Apache Arrow .feather](https://github.com/wesm/feather) binaries, which the user can then pass to other software (including languages such as R) for further analysis.
 
 ## Installation, setup, and help
 Install [Python 3](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfca/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
