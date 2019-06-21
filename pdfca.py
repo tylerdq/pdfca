@@ -59,7 +59,7 @@ def verify(binary):
 
 
 @click.group()
-@click.version_option(version=click.style('1.1.0', fg='bright_cyan'))
+@click.version_option(version=click.style('2.0.0', fg='bright_cyan'))
 def cli():
     pass
 
