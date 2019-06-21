@@ -1,6 +1,6 @@
 # pdfca
 
-[![DOI](https://zenodo.org/badge/145485474.svg)](https://zenodo.org/badge/latestdoi/145485474)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1972950.svg)](https://doi.org/10.5281/zenodo.1972950)
 
 pdfca (PDF Corpus/Content Analysis) can assist with managing a PDF corpus for textual characterization. It provides various commands for building and interacting with such a corpus through [Pandas dataframes](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) stored locally via [Apache Arrow](https://arrow.apache.org/) binaries, which the user can then pass to other software (including languages such as R) for further analysis.
 
