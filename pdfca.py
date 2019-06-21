@@ -6,7 +6,9 @@ from pathlib import Path
 
 import click
 import pandas as pd
+import pyarrow as pa
 import pyarrow.feather as feather
+import pyarrow.parquet as pq
 import PyPDF2
 
 
@@ -18,30 +20,42 @@ def count(x, term):
 
 def load_df(binary):
     """Open local Feather binary for manipulation with pandas"""
-    if not binary.endswith('.feather'):
-        binary = f'{binary}.feather'
-    binary = Path(binary)
-    try:
-        binary = binary.resolve(strict=True)
-    except FileNotFoundError:
-            click.echo('Binary not initialized! Run "pdfca.py init".')
-    else:
-        global df
+    global df
+    if binary.endswith('.feather'):
+        verify(binary)
+        click.secho(f'Loading "{binary}"...', fg='cyan')
         df = feather.read_feather(binary)
+    elif binary.endswith('.parquet'):
+        verify(binary)
+        click.secho(f'Loading "{binary}"...', fg='cyan')
+        table = pq.read_table(binary)
+        df = table.to_pandas()
 
 
 def save_df(data_frame, binary):
     """Save dataframe to local Feather binary"""
     os.chdir(sys.path[0])
-    if not binary.endswith('.feather'):
-        binary = f'{binary}.feather'
-    binary = Path(binary)
-    feather.write_feather(data_frame, binary)
+    if binary.endswith('.feather'):
+        click.secho(f'Saving "{binary}"...', fg='cyan')
+        feather.write_feather(data_frame, binary)
+    elif binary.endswith('.parquet'):
+        click.secho(f'Saving "{binary}"...', fg='cyan')
+        table = pa.Table.from_pandas(data_frame)
+        pq.write_table(table, binary)
 
 
 def show_page(item):
     if item is not None:
         return '(Page #%d)' % item
+
+
+def verify(binary):
+    binary = Path(binary)
+    try:
+        binary = binary.resolve(strict=True)
+    except FileNotFoundError:
+            click.secho('Binary not initialized! Run "pdfca.py init".',
+                        fg='bright_red')
 
 
 @click.group()
@@ -53,15 +67,18 @@ def cli():
 @cli.command()
 @click.argument('name')
 @click.option('--binary', '-b', default='pdfs',
-              help='Specify the .feather file to load.')
+              help='Binary filename to load/save.')
+@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
+              default='.parquet', help='Binary format to use.')
 @click.confirmation_option(prompt=click.style('Really remove records?',
                            fg='bright_yellow'))
-def cut(name, binary):
+def cut(name, binary, format):
     """Remove all dataframe records pertaining to a specific PDF.
     NAME must be a PDF file without its ".pdf" extension.\n
     NOTE: This operation is potentially destructive (use with care)."""
+    binary = binary + format
     load_df(binary)
-    if df['filename'].str.contains(name).any():
+    if df['filename'].str.contains(re.escape(name)).any():
         revised = df[df.filename != name]
         save_df(revised, binary)
     else:
@@ -70,12 +87,15 @@ def cut(name, binary):
 
 @cli.command()
 @click.option('--binary', '-b', default='pdfs',
-              help='Specify the .feather file to initialize.')
+              help='Binary filename to initialize.')
+@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
+              default='.parquet', help='Binary format to use.')
 @click.confirmation_option(prompt=click.style('May delete stored data! ' +
                            'Proceed?', fg='bright_yellow'))
-def init(binary):
-    """Set up empty .feather binary for storing data.\n
+def init(binary, format):
+    """Set up empty binary file for storing data.\n
     NOTE: This will delete the existing binary, if any."""
+    binary = binary + format
     columns = ['filename', 'page', 'text']
     global df
     df = pd.DataFrame(columns=columns)
@@ -85,10 +105,13 @@ def init(binary):
 @cli.command()
 @click.argument('directory')
 @click.option('--binary', '-b', default='pdfs',
-              help='Specify the .feather file to update.')
-def extract(directory, binary):
+              help='Binary filename to update.')
+@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
+              default='.parquet', help='Binary format to use.')
+def extract(directory, binary, format):
     """Scrape text from pages of files in "input" folder.
     Requires DIRECTORY (whether relative or absolute)."""
+    binary = binary + format
     load_df(binary)
     os.chdir(directory)
     pdfs = glob.glob('*.pdf')
@@ -97,14 +120,14 @@ def extract(directory, binary):
         total = 0
         for pdf in pdfs:
             filename = os.path.splitext(pdf)[0]
-            if df['filename'].str.contains(filename).any():
+            if df['filename'].str.contains(re.escape(filename)).any():
                 click.secho(f'{filename} already in dataframe, skipping.',
                             fg='bright_yellow')
             else:
-                click.secho(f'Extracting text from {filename}...', fg='cyan')
+                click.secho(f'Extracting text from {filename}...',
+                            fg='bright_magenta')
                 read_pdf = PyPDF2.PdfFileReader(pdf)
                 pages = read_pdf.getNumPages()
-                # arrow = click.style('>', fg='bright_yellow')
                 with click.progressbar(iterable=range(pages),
                                        fill_char='>',
                                        item_show_func=show_page) as bar:
@@ -113,6 +136,7 @@ def extract(directory, binary):
                         df.loc[len(df)] = [filename, page + 1, text]
                         total = total + 1
             save_df(df, binary)
+            os.chdir(directory)
         click.secho(f'Extracted and saved {total} total pages.',
                     fg='bright_green')
     else:
@@ -122,7 +146,9 @@ def extract(directory, binary):
 @cli.command()
 @click.argument('term')
 @click.option('--binary', '-b', default='pdfs',
-              help='Specify the .feather file to load.')
+              help='Binary filename to load.')
+@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
+              default='.parquet', help='Binary format to use.')
 @click.option('--search-type', '-st',
               type=click.Choice(['sum', 'max', 'min', 'mean']),
               help='Specify how to display the search results.')
@@ -131,13 +157,14 @@ def extract(directory, binary):
               help='Choose attribute for grouping.')
 @click.option('--truncate', '-t', is_flag=True,
               help='View specific number of rows in results.')
-def search(term, binary, group, search_type, truncate):
+def search(term, binary, format, group, search_type, truncate):
     """Search the dataframe for a specific term provided as TERM.
     Default returns a sum of the counts of the term in each PDf.
     All search types return a grouped dataframe sorted by term
     frequencies in ascending order.\n
     NOTE: "min", "max", and "mean" apply on a terms-per-page basis,
     NOT on a terms-per-reference basis."""
+    binary = binary + format
     load_df(binary)
     df[term] = df['text'].apply(count, term=term)
     if group:
@@ -157,12 +184,15 @@ def search(term, binary, group, search_type, truncate):
 
 @cli.command()
 @click.option('--binary', '-b', default='pdfs',
-              help='Specify the .feather file to load.')
+              help='Binary filename to load.')
+@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
+              default='.parquet', help='Binary format to use.')
 @click.option('--deep', '-d', is_flag=True,
               help='Show descriptive statistics on a per-reference level.')
-def view(deep, binary):
+def view(deep, binary, format):
     """View table with summary statistics from dataframe.
     By default, summarizes across all references."""
+    binary = binary + format
     load_df(binary)
     if deep:
         click.echo(df.groupby(['filename']).describe())
