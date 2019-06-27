@@ -90,14 +90,15 @@ def cut(name, binary, format):
               help='Binary filename to initialize.')
 @click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
               default='.parquet', help='Binary format to use.')
-@click.confirmation_option(prompt=click.style('May delete stored data! ' +
-                           'Proceed?', fg='bright_yellow'))
 def init(binary, format):
     """Set up empty binary file for storing data.\n
     NOTE: This will delete the existing binary, if any."""
     binary = binary + format
+    if os.path.isfile(binary):
+        if not click.confirm(click.style('Binary exists! Overwrite?',
+                                         fg='bright_red')):
+            sys.exit()
     columns = ['filename', 'page', 'text']
-    global df
     df = pd.DataFrame(columns=columns)
     save_df(df, binary)
 
