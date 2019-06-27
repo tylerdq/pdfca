@@ -50,9 +50,8 @@ def show_page(item):
 
 
 def verify(binary):
-    binary = Path(binary)
     try:
-        binary = binary.resolve(strict=True)
+        binary = Path(binary).resolve(strict=True)
     except FileNotFoundError:
         click.secho(f'Binary not found! Check name or run "pdfca.py init".',
                     fg='bright_red')
