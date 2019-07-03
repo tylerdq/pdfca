@@ -89,6 +89,8 @@ def cut(name, binary, format):
         save_df(revised, binary)
     else:
         click.secho('No matching records in dataframe.', fg='bright_red')
+    reduction = len(df.index) - len(revised.index)
+    click.echo(f'Removed {reduction} lines from dataframe.')
 
 
 @cli.command()
