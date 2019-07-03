@@ -201,5 +201,14 @@ def summarize(deep, binary, format):
         click.echo(df.describe())
 
 
+@cli.command()
+@file_spec
+def view(binary, format):
+    """View dataframe."""
+    binary = binary + format
+    load_df(binary)
+    click.echo(df)
+
+
 if __name__ == '__main__':
     cli()
