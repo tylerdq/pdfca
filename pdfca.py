@@ -92,21 +92,6 @@ def cut(name, binary, format):
 
 
 @cli.command()
-@file_spec
-def init(binary, format):
-    """Set up empty binary file for storing data.\n
-    NOTE: This will delete the existing binary, if any."""
-    binary = binary + format
-    if os.path.isfile(binary):
-        if not click.confirm(click.style('Binary exists! Overwrite?',
-                                         fg='bright_red')):
-            sys.exit()
-    columns = ['filename', 'page', 'text']
-    df = pd.DataFrame(columns=columns)
-    save_df(df, binary)
-
-
-@cli.command()
 @click.argument('directory')
 @file_spec
 def extract(directory, binary, format):
@@ -148,6 +133,21 @@ def extract(directory, binary, format):
                     fg='bright_green')
     else:
         click.secho('Exiting without extracting text.', fg='bright_red')
+
+
+@cli.command()
+@file_spec
+def init(binary, format):
+    """Set up empty binary file for storing data.\n
+    NOTE: This will delete the existing binary, if any."""
+    binary = binary + format
+    if os.path.isfile(binary):
+        if not click.confirm(click.style('Binary exists! Overwrite?',
+                                         fg='bright_red')):
+            sys.exit()
+    columns = ['filename', 'page', 'text']
+    df = pd.DataFrame(columns=columns)
+    save_df(df, binary)
 
 
 @cli.command()
