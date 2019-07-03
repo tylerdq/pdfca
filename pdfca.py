@@ -120,6 +120,7 @@ def extract(directory, binary, format):
                      'PDFs. Continue?', fg='bright_yellow')):
         total = 0
         for pdf in pdfs:
+            exceptions = []
             filename = os.path.splitext(pdf)[0]
             if df['filename'].str.contains(re.escape(filename)).any():
                 click.secho(f'{filename} already in dataframe, skipping.',
@@ -133,9 +134,14 @@ def extract(directory, binary, format):
                                        fill_char='>',
                                        item_show_func=show_page) as bar:
                     for page in bar:
-                        text = read_pdf.getPage(page).extractText()
+                        try:
+                            text = read_pdf.getPage(page).extractText()
+                        except:
+                            exceptions.append(page)
+                            text = ''
                         df.loc[len(df)] = [filename, page + 1, text]
                         total = total + 1
+                    print(f'Errors with text on {len(exceptions)} pages.')
             save_df(df, binary)
             os.chdir(directory)
         click.secho(f'Extracted and saved {total} total pages.',
