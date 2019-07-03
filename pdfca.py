@@ -129,6 +129,7 @@ def extract(directory, binary, format):
                             text = ''
                         df.loc[len(df)] = [filename, page + 1, text]
                         total = total + 1
+                if exceptions:
                     print(f'Errors with text on {len(exceptions)} pages.')
             save_df(df, binary)
             os.chdir(directory)
