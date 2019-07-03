@@ -190,8 +190,8 @@ def search(term, binary, format, group, search_type, truncate):
               default='.parquet', help='Binary format to use.')
 @click.option('--deep', '-d', is_flag=True,
               help='Show descriptive statistics on a per-reference level.')
-def view(deep, binary, format):
-    """View table with summary statistics from dataframe.
+def summarize(deep, binary, format):
+    """Show table with summary statistics from dataframe.
     By default, summarizes across all references."""
     binary = binary + format
     load_df(binary)
