@@ -18,6 +18,15 @@ def count(x, term):
     return num
 
 
+def file_spec(func):
+    func = click.option('--binary', '-b', default='pdfs',
+                        help='Binary filename to operate on.')(func)
+    func = click.option('--format', '-f', type=click.Choice(['.feather',
+                        '.parquet']), default='.parquet',
+                        help='Binary format to use.')(func)
+    return func
+
+
 def load_df(binary):
     """Open local Feather binary for manipulation with pandas"""
     global df
@@ -66,10 +75,7 @@ def cli():
 
 @cli.command()
 @click.argument('name')
-@click.option('--binary', '-b', default='pdfs',
-              help='Binary filename to load/save.')
-@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
-              default='.parquet', help='Binary format to use.')
+@file_spec
 @click.confirmation_option(prompt=click.style('Really remove records?',
                            fg='bright_yellow'))
 def cut(name, binary, format):
@@ -86,10 +92,7 @@ def cut(name, binary, format):
 
 
 @cli.command()
-@click.option('--binary', '-b', default='pdfs',
-              help='Binary filename to initialize.')
-@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
-              default='.parquet', help='Binary format to use.')
+@file_spec
 def init(binary, format):
     """Set up empty binary file for storing data.\n
     NOTE: This will delete the existing binary, if any."""
@@ -105,10 +108,7 @@ def init(binary, format):
 
 @cli.command()
 @click.argument('directory')
-@click.option('--binary', '-b', default='pdfs',
-              help='Binary filename to update.')
-@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
-              default='.parquet', help='Binary format to use.')
+@file_spec
 def extract(directory, binary, format):
     """Scrape text from pages of files in "input" folder.
     Requires DIRECTORY (whether relative or absolute)."""
@@ -152,10 +152,7 @@ def extract(directory, binary, format):
 
 @cli.command()
 @click.argument('term')
-@click.option('--binary', '-b', default='pdfs',
-              help='Binary filename to load.')
-@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
-              default='.parquet', help='Binary format to use.')
+@file_spec
 @click.option('--search-type', '-st',
               type=click.Choice(['sum', 'max', 'min', 'mean']),
               help='Specify how to display the search results.')
@@ -190,10 +187,7 @@ def search(term, binary, format, group, search_type, truncate):
 
 
 @cli.command()
-@click.option('--binary', '-b', default='pdfs',
-              help='Binary filename to load.')
-@click.option('--format', '-f', type=click.Choice(['.feather', '.parquet']),
-              default='.parquet', help='Binary format to use.')
+@file_spec
 @click.option('--deep', '-d', is_flag=True,
               help='Show descriptive statistics on a per-reference level.')
 def summarize(deep, binary, format):
