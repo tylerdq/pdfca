@@ -98,7 +98,6 @@ def cut(name, binary, format):
 @file_spec
 def extract(directory, binary, format):
     """Scrape text from pages of files in "input" folder.
-    Requires DIRECTORY (whether relative or absolute)."""
     Requires DIRECTORY (whether relative or absolute).
     Use ./ as DIRECTORY to process files in the pdfca folder."""
     binary = binary + format
