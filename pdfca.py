@@ -207,11 +207,18 @@ def summarize(deep, binary, format):
 
 @cli.command()
 @file_spec
-def view(binary, format):
-    """View dataframe."""
+@click.option('--head', '-h', type=int)
+@click.option('--tail', '-t', type=int)
+def view(binary, format, head, tail):
+    """View dataframe records."""
     binary = binary + format
     load_df(binary)
-    click.echo(df)
+    if head:
+        click.echo(df.head(head))
+    elif tail:
+        click.echo(df.tail(tail))
+    else:
+        click.echo(df)
 
 
 if __name__ == '__main__':
