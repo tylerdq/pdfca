@@ -1,0 +1,10 @@
+name: pdfca2
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - click=7.0=py_0
+  - pandas=0.25.0=py37he350917_0
+  - pyarrow=0.14.1=py37h803c963_0
+  - pypdf2=1.26.0=py_2
+  - python=3.7.3=h510b542_1
