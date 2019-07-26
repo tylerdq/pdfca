@@ -7,19 +7,19 @@ pdfca (PDF Corpus/Content Analysis) can assist with managing a PDF corpus for te
 ## Installation, setup, and help
 Install [Python 3](https://www.python.org/downloads/). Then [download](https://github.com/tylerdq/pdfca/archive/master.zip) or clone this repository and from the command line (Terminal, PowerShell, cmd, etc.) [`cd`](https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/command-line-101) into the downloaded/cloned directory and run:
 
-`pip3 install -r requirements.txt` (only once per machine)
+`pip install .` (only once per machine)
 
 and then:
 
-`python pdfca.py init` (to initialize an empty binary file for data storage)
+`pdfca init` (to initialize an empty binary file for data storage)
 
 For more information on the program and its commands, run:
 
-`python pdfca.py --help` for an overview or use the `--help` flag on any command.
+`pdfca --help` for an overview or use the `--help` flag on any command.
 
 ## Usage
 
-Run `python pdfca.py extract` to pull text from PDF files (see below notes about preparing data for extraction). The program will not extract text from PDFs that are already listed in the loaded binary file. To re-extract text from certain files, run `python pdfca cut FILE` for each file to be removed, then re-run the `extract` command.
+Run `pdfca extract` to pull text from PDF files (see below notes about preparing data for extraction). The program will not extract text from PDFs that are already listed in the loaded binary file. To re-extract text from certain files, run `pdfca cut FILE` for each file to be removed, then re-run the `extract` command.
 
 *The terminal may print the following error while parsing PDFs: `PdfReadWarning: Xref table not zero-indexed. ID numbers for objects will be corrected. [pdf.py:1736]`. This is a [known issue](https://github.com/mstamy2/PyPDF2/issues/36) with the dependency PyPDF2 and will likely not impact the search.*
 
