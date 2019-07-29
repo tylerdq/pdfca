@@ -87,10 +87,10 @@ def cut(name, binary, format):
     if df['filename'].str.contains(re.escape(name)).any():
         revised = df[df.filename != name]
         save_df(revised, binary)
+        reduction = len(df.index) - len(revised.index)
+        click.echo(f'Removed {reduction} lines from dataframe.')
     else:
         click.secho('No matching records in dataframe.', fg='bright_red')
-    reduction = len(df.index) - len(revised.index)
-    click.echo(f'Removed {reduction} lines from dataframe.')
 
 
 @cli.command()
