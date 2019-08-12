@@ -43,7 +43,6 @@ def load_df(binary):
 
 def save_df(data_frame, binary):
     """Save dataframe to local Feather binary"""
-    os.chdir(sys.path[0])
     if binary.endswith('.feather'):
         click.secho(f'Saving "{binary}"...', fg='cyan')
         feather.write_feather(data_frame, binary)
@@ -102,6 +101,7 @@ def extract(directory, binary, format):
     Use "./" as DIRECTORY to process files in the pdfca folder."""
     binary = binary + format
     load_df(binary)
+    cwd = os.getcwd()
     os.chdir(directory)
     pdfs = glob.glob('*.pdf')
     if click.confirm(click.style(f'Ready to get text from {len(pdfs)} ' +
@@ -131,8 +131,7 @@ def extract(directory, binary, format):
                         total = total + 1
                 if exceptions:
                     print(f'Errors with text on {len(exceptions)} pages.')
-            save_df(df, binary)
-            os.chdir(directory)
+            save_df(df, f'{cwd}\\{binary}')
         click.secho(f'Extracted and saved {total} total pages.',
                     fg='bright_green')
     else:
