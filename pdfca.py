@@ -13,7 +13,7 @@ import PyPDF2
 
 
 def count(x, term):
-    search = re.findall(term.lower(), x.lower())
+    search = re.findall(term.strip().lower(), x.strip().lower())
     num = len(search)
     return num
 
