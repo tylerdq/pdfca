@@ -61,7 +61,7 @@ def verify(binary):
     try:
         binary = Path(binary).resolve(strict=True)
     except FileNotFoundError:
-        click.secho(f'Binary not found! Check name or run "pdfca.py init".',
+        click.secho(f'Binary not found! Check name or run "pdfca init".',
                     fg='bright_red')
         sys.exit()
 
