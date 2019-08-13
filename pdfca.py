@@ -139,7 +139,7 @@ def cut(name, binary, form):
               help='Show status report after export (asks to save as .csv).')
 @file_spec
 def extract(directory, binary, form, incremental, report):
-    """Scrape text from pages of files in "input" folder.
+    """Scrape text from pages of files in given folder.
     Requires DIRECTORY (whether relative or absolute).
     Use "./" as DIRECTORY to process files in the current directory."""
     binary = binary + form
