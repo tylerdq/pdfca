@@ -252,8 +252,7 @@ def search(term, binary, form, search_type, number):
 def summarize(deep, binary, form):
     """Show table with summary statistics from dataframe.
     By default, summarizes across all references."""
-    binary = binary + form
-    load_df(binary)
+    load_df(binary + form)
     if deep:
         click.echo(df.groupby(['filename']).describe())
     else:
@@ -266,8 +265,7 @@ def summarize(deep, binary, form):
 @click.option('--tail', '-t', type=int)
 def view(binary, form, head, tail):
     """View dataframe records."""
-    binary = binary + form
-    load_df(binary)
+    load_df(binary + form)
     if head:
         click.echo(df.head(head))
     elif tail:
