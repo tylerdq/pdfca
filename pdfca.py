@@ -220,7 +220,7 @@ def init(binary, form):
               help='Specify how many rows to show in output.')
 def search(term, binary, form, search_type, number):
     """Search the dataframe for a specific term provided as TERM.
-    Default returns a sum of the counts of the term in each PDf.
+    Default returns a sum of the counts of the term in each PDF.
     All search types return a grouped dataframe sorted by term
     frequencies in ascending order.\n
     NOTE: "min", "max", and "mean" apply on a terms-per-page basis,
