@@ -21,7 +21,7 @@ def count(x, term):
 def file_spec(func):
     func = click.option('--binary', '-b', default='pdfs',
                         help='Binary filename to operate on.')(func)
-    func = click.option('--format', '-f', type=click.Choice(['.feather',
+    func = click.option('--form', '-f', type=click.Choice(['.feather',
                         '.parquet']), default='.parquet',
                         help='Binary format to use.')(func)
     return func
@@ -77,21 +77,21 @@ def cli():
 def convert(binary):
     """Convert binary file to its opposite format (.parquet/.feather). Leaves the original binary intact. Requires BINARY as a complete filename ending in ".parquet" or ".feather".\n
     NOTE: This operation is potentially destructive (use with care)."""
-    format = os.path.splitext(binary)[1]
+    form = os.path.splitext(binary)[1]
     pref = os.path.splitext(binary)[0]
-    binary = pref + format
+    binary = pref + form
     load_df(binary)
-    if format == '.parquet':
-        format = '.feather'
-        binary = pref + format
+    if form == '.parquet':
+        form = '.feather'
+        binary = pref + form
         if os.path.isfile(binary):
             if not click.confirm(click.style('Binary exists! Overwrite?',
                                              fg='bright_red')):
                 sys.exit()
         save_df(df, binary)
-    elif format == '.feather':
-        format = '.parquet'
-        binary = pref + format
+    elif form == '.feather':
+        form = '.parquet'
+        binary = pref + form
         if os.path.isfile(binary):
             if not click.confirm(click.style('Binary exists! Overwrite?',
                                              fg='bright_red')):
@@ -107,11 +107,11 @@ def convert(binary):
 @file_spec
 @click.confirmation_option(prompt=click.style('Really remove records?',
                            fg='bright_yellow'))
-def cut(name, binary, format):
+def cut(name, binary, form):
     """Remove all dataframe records pertaining to a specific PDF.
     NAME must be a PDF file without its ".pdf" extension.\n
     NOTE: This operation is potentially destructive (use with care)."""
-    binary = binary + format
+    binary = binary + form
     load_df(binary)
     if df['filename'].str.contains(re.escape(name)).any():
         revised = df[df.filename != name]
@@ -129,11 +129,11 @@ def cut(name, binary, format):
 @click.option('--report', '-r', is_flag=True,
               help='Show status report after export (asks to save as .csv).')
 @file_spec
-def extract(directory, binary, format, incremental, report):
+def extract(directory, binary, form, incremental, report):
     """Scrape text from pages of files in "input" folder.
     Requires DIRECTORY (whether relative or absolute).
     Use "./" as DIRECTORY to process files in the current directory."""
-    binary = binary + format
+    binary = binary + form
     load_df(binary)
     cwd = os.getcwd()
     os.chdir(directory)
@@ -194,10 +194,10 @@ def extract(directory, binary, format, incremental, report):
 
 @cli.command()
 @file_spec
-def init(binary, format):
+def init(binary, form):
     """Set up empty binary file for storing data.\n
     NOTE: This will delete the existing binary, if any."""
-    binary = binary + format
+    binary = binary + form
     if os.path.isfile(binary):
         if not click.confirm(click.style('Binary exists! Overwrite?',
                                          fg='bright_red')):
@@ -218,14 +218,14 @@ def init(binary, format):
               help='Choose attribute for grouping.')
 @click.option('--truncate', '-t', is_flag=True,
               help='View specific number of rows in results.')
-def search(term, binary, format, group, search_type, truncate):
+def search(term, binary, form, group, search_type, truncate):
     """Search the dataframe for a specific term provided as TERM.
     Default returns a sum of the counts of the term in each PDf.
     All search types return a grouped dataframe sorted by term
     frequencies in ascending order.\n
     NOTE: "min", "max", and "mean" apply on a terms-per-page basis,
     NOT on a terms-per-reference basis."""
-    binary = binary + format
+    binary = binary + form
     load_df(binary)
     df[term] = df['text'].apply(count, term=term)
     if group:
@@ -247,10 +247,10 @@ def search(term, binary, format, group, search_type, truncate):
 @file_spec
 @click.option('--deep', '-d', is_flag=True,
               help='Show descriptive statistics on a per-reference level.')
-def summarize(deep, binary, format):
+def summarize(deep, binary, form):
     """Show table with summary statistics from dataframe.
     By default, summarizes across all references."""
-    binary = binary + format
+    binary = binary + form
     load_df(binary)
     if deep:
         click.echo(df.groupby(['filename']).describe())
@@ -262,9 +262,9 @@ def summarize(deep, binary, format):
 @file_spec
 @click.option('--head', '-h', type=int)
 @click.option('--tail', '-t', type=int)
-def view(binary, format, head, tail):
+def view(binary, form, head, tail):
     """View dataframe records."""
-    binary = binary + format
+    binary = binary + form
     load_df(binary)
     if head:
         click.echo(df.head(head))
