@@ -217,7 +217,7 @@ def init(binary, form):
               type=click.Choice(['filename', 'page']),
               help='Choose attribute for grouping.')
 @click.option('--truncate', '-t', is_flag=True,
-              help='View specific number of rows in results.')
+              help='Trigger script asking how many rows of results to show.')
 def search(term, binary, form, group, search_type, truncate):
     """Search the dataframe for a specific term provided as TERM.
     Default returns a sum of the counts of the term in each PDf.
