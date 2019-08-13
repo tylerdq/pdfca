@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pdfca',
-    version='2.1.0',
+    version='2.2.0',
     py_modules=['pdfca'],
     install_requires=[
         'click',
