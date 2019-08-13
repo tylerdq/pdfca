@@ -213,34 +213,36 @@ def init(binary, form):
 @click.option('--search-type', '-st',
               type=click.Choice(['sum', 'max', 'min', 'mean']),
               help='Specify how to display the search results.')
-@click.option('--group', '-g',
-              type=click.Choice(['filename', 'page']),
-              help='Choose attribute for grouping.')
-@click.option('--truncate', '-t', is_flag=True,
-              help='Trigger script asking how many rows of results to show.')
-def search(term, binary, form, group, search_type, truncate):
+# @click.option('--group', '-g',
+#               type=click.Choice(['filename', 'page']), default='filename',
+#               help='Specify attribute for grouping.')
+@click.option('--number', '-n', default=10,
+              help='Specify how many rows to show in output.')
+def search(term, binary, form, search_type, number):
     """Search the dataframe for a specific term provided as TERM.
     Default returns a sum of the counts of the term in each PDf.
     All search types return a grouped dataframe sorted by term
     frequencies in ascending order.\n
     NOTE: "min", "max", and "mean" apply on a terms-per-page basis,
     NOT on a terms-per-reference basis."""
-    binary = binary + form
-    load_df(binary)
+    group = 'filename'
+    load_df(binary + form)
     df[term] = df['text'].apply(count, term=term)
-    if group:
-        results = df.drop(['text'], axis=1).groupby([group])
-    else:
-        results = df.drop(['text'], axis=1).groupby(['filename'])
+    grouped = df.drop(['text'], axis=1).groupby([group])
+    dropped = df[[group, term]].groupby([group])
     if search_type:
-        results = getattr(results, search_type)().sort_values(by=[term])
+        results = getattr(dropped, search_type)().sort_values(by=[term])
     else:
-        results = results.sum().sort_values(by=[term])
-    if truncate:
-        n = click.prompt('How many records to show?', default=25)
-        click.echo(results.tail(n))
-    else:
-        click.echo(results)
+        results = dropped.sum().sort_values(by=[term])
+    click.echo(f'Top {number} results:')
+    click.echo(results.tail(number))
+    if click.confirm('\nWould you like to drill down?'):
+        key = click.prompt('Please enter item to explore')
+        filtered = grouped.get_group(key).sort_values(by=[term])
+        filtered = filtered.set_index('page')
+        click.echo()
+        click.echo(f'Top {number} results:')
+        click.echo(filtered.tail(number).sort_values(by=['page']))
 
 
 @cli.command()
