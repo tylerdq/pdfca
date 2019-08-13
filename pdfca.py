@@ -73,6 +73,36 @@ def cli():
 
 
 @cli.command()
+@click.argument('binary')
+def convert(binary):
+    """Convert binary file to its opposite format (.parquet/.feather). Leaves the original binary intact. Requires BINARY as a complete filename ending in ".parquet" or ".feather".\n
+    NOTE: This operation is potentially destructive (use with care)."""
+    format = os.path.splitext(binary)[1]
+    pref = os.path.splitext(binary)[0]
+    binary = pref + format
+    load_df(binary)
+    if format == '.parquet':
+        format = '.feather'
+        binary = pref + format
+        if os.path.isfile(binary):
+            if not click.confirm(click.style('Binary exists! Overwrite?',
+                                             fg='bright_red')):
+                sys.exit()
+        save_df(df, binary)
+    elif format == '.feather':
+        format = '.parquet'
+        binary = pref + format
+        if os.path.isfile(binary):
+            if not click.confirm(click.style('Binary exists! Overwrite?',
+                                             fg='bright_red')):
+                sys.exit()
+        save_df(df, binary)
+    else:
+        click.secho('Invalid file extension (must be .feather or .parquet).',
+                    fg='bright_red')
+
+
+@cli.command()
 @click.argument('name')
 @file_spec
 @click.confirmation_option(prompt=click.style('Really remove records?',
