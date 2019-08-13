@@ -107,7 +107,7 @@ def extract(directory, binary, format, incremental, report):
     os.chdir(directory)
     pdfs = glob.glob('*.pdf')
     if click.confirm(click.style(f'Ready to get text from {len(pdfs)} ' +
-                     'PDFs. Continue?', fg='bright_yellow')):
+                     'unscraped PDFs. Continue?', fg='bright_yellow')):
         total = 0
         for pdf in pdfs:
             exceptions = []
