@@ -100,7 +100,7 @@ def cut(name, binary, format):
 def extract(directory, binary, format, incremental, report):
     """Scrape text from pages of files in "input" folder.
     Requires DIRECTORY (whether relative or absolute).
-    Use "./" as DIRECTORY to process files in the pdfca folder."""
+    Use "./" as DIRECTORY to process files in the current directory."""
     binary = binary + format
     load_df(binary)
     cwd = os.getcwd()
