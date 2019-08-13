@@ -94,8 +94,10 @@ def cut(name, binary, format):
 
 @cli.command()
 @click.argument('directory')
+@click.option('--incremental', '-i', is_flag=True,
+              help='Save dataframe between each file (safer but slower).')
 @file_spec
-def extract(directory, binary, format):
+def extract(directory, binary, format, incremental, report):
     """Scrape text from pages of files in "input" folder.
     Requires DIRECTORY (whether relative or absolute).
     Use "./" as DIRECTORY to process files in the pdfca folder."""
@@ -131,6 +133,9 @@ def extract(directory, binary, format):
                         total = total + 1
                 if exceptions:
                     print(f'Errors with text on {len(exceptions)} pages.')
+            if incremental:
+                save_df(df, f'{cwd}\\{binary}')
+        if not incremental:
             save_df(df, f'{cwd}\\{binary}')
         click.secho(f'Extracted and saved {total} total pages.',
                     fg='bright_green')
