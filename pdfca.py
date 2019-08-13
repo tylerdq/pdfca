@@ -96,6 +96,8 @@ def cut(name, binary, format):
 @click.argument('directory')
 @click.option('--incremental', '-i', is_flag=True,
               help='Save dataframe between each file (safer but slower).')
+@click.option('--report', '-r', is_flag=True,
+              help='Show status report after export (asks to save as .csv).')
 @file_spec
 def extract(directory, binary, format, incremental, report):
     """Scrape text from pages of files in "input" folder.
@@ -105,40 +107,57 @@ def extract(directory, binary, format, incremental, report):
     load_df(binary)
     cwd = os.getcwd()
     os.chdir(directory)
+    results = {}
     pdfs = glob.glob('*.pdf')
+    saved = list(df['filename'].unique())
+    for s in saved:
+        results[s] = 'Skipped'
+        s = s + '.pdf'
+        pdfs.remove(s)
     if click.confirm(click.style(f'Ready to get text from {len(pdfs)} ' +
                      'unscraped PDFs. Continue?', fg='bright_yellow')):
         total = 0
+        results = pd.DataFrame(columns=['status', 'erpg'], index=pdfs)
         for pdf in pdfs:
-            exceptions = []
             filename = os.path.splitext(pdf)[0]
-            if df['filename'].str.contains(re.escape(filename)).any():
-                click.secho(f'{filename} already in dataframe, skipping.',
-                            fg='bright_yellow')
-            else:
-                click.secho(f'Extracting text from {filename}...',
-                            fg='bright_magenta')
-                read_pdf = PyPDF2.PdfFileReader(pdf)
+            results.at[pdf, 'status'] = 'success'
+            click.secho(f'Extracting text from {filename}...',
+                        fg='bright_magenta')
+            read_pdf = PyPDF2.PdfFileReader(pdf)
+            try:
                 pages = read_pdf.getNumPages()
-                with click.progressbar(iterable=range(pages),
-                                       fill_char='>',
-                                       item_show_func=show_page) as bar:
-                    for page in bar:
-                        try:
-                            text = read_pdf.getPage(page).extractText()
-                        except:
-                            exceptions.append(page)
-                            text = ''
+            except:
+                results.at[pdf, 'status'] = 'fail'
+                click.secho(f'Error reading file.', fg='bright_yellow')
+                continue
+            with click.progressbar(iterable=range(pages),
+                                   fill_char='>',
+                                   item_show_func=show_page) as bar:
+                fails = []
+                for page in bar:
+                    try:
+                        text = read_pdf.getPage(page).extractText()
                         df.loc[len(df)] = [filename, page + 1, text]
-                        total = total + 1
-                if exceptions:
-                    print(f'Errors with text on {len(exceptions)} pages.')
+                        total += 1
+                    except:
+                        text = ''
+                        fails.append(page)
+            if fails:
+                click.secho(f'{len(fails)} failed pages.', fg='bright_yellow')
+                results.at[pdf, 'status'] = 'partial'
+                results.at[pdf, 'erpg'] = fails
             if incremental:
                 save_df(df, f'{cwd}\\{binary}')
         if not incremental:
             save_df(df, f'{cwd}\\{binary}')
         click.secho(f'Extracted and saved {total} total pages.',
                     fg='bright_green')
+        if report:
+            results['erpgs'] = results['erpg'].str.len()
+            click.echo(f"Results summary:\n{results.describe(include='all')}")
+            if click.confirm('Export detailed results to file?'):
+                report = click.prompt('Enter name for .csv file to export')
+                results.to_csv(f'{cwd}\\{report}.csv', index=True)
     else:
         click.secho('Exiting without extracting text.', fg='bright_red')
 
