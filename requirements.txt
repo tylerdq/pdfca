@@ -1,4 +1,5 @@
 click
+colorama
 pandas
 pyarrow
 PyPDF2
