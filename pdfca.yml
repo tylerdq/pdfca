@@ -1,4 +1,4 @@
-name: pdfca2
+name: pdfca
 channels:
   - conda-forge
   - defaults
