@@ -150,9 +150,10 @@ def extract(directory, binary, form, incremental, report):
     pdfs = glob.glob('*.pdf')
     saved = list(df['filename'].unique())
     for s in saved:
-        results[s] = 'Skipped'
-        s = s + '.pdf'
-        pdfs.remove(s)
+        if (s + '.pdf') in pdfs:
+            results[s] = 'Skipped'
+            s = s + '.pdf'
+            pdfs.remove(s)
     if click.confirm(click.style(f'Ready to get text from {len(pdfs)} ' +
                      'unscraped PDFs. Continue?', fg='bright_yellow')):
         total = 0
