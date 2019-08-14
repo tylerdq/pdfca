@@ -158,10 +158,10 @@ def extract(directory, binary, form, incremental, report):
                      'unscraped PDFs. Continue?', fg='bright_yellow')):
         total = 0
         results = pd.DataFrame(columns=['status', 'erpg'], index=pdfs)
-        for pdf in pdfs:
+        for p, pdf in enumerate(pdfs):
             filename = os.path.splitext(pdf)[0]
             results.at[pdf, 'status'] = 'success'
-            click.secho(f'Extracting text from {filename}...',
+            click.secho(f'Processing {filename}... (PDF {p + 1}/{len(pdfs)})',
                         fg='bright_magenta')
             read_pdf = PyPDF2.PdfFileReader(pdf)
             try:
