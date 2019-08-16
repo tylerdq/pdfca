@@ -3,6 +3,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from threading import Thread
 
 import click
 import pandas as pd
@@ -97,7 +98,9 @@ def convert(binary):
             if not click.confirm(click.style('Binary exists! Overwrite?',
                                              fg='bright_red')):
                 sys.exit()
-        save_df(df, binary)
+        save = Thread(target=save_df, args=(df, binary))
+        save.start()
+        save.join()
     elif form == '.feather':
         form = '.parquet'
         binary = pref + form
@@ -105,7 +108,9 @@ def convert(binary):
             if not click.confirm(click.style('Binary exists! Overwrite?',
                                              fg='bright_red')):
                 sys.exit()
-        save_df(df, binary)
+        save = Thread(target=save_df, args=(df, binary))
+        save.start()
+        save.join()
     else:
         click.secho('Invalid file extension (must be .feather or .parquet).',
                     fg='bright_red')
@@ -124,9 +129,12 @@ def cut(name, binary, form):
     load_df(binary)
     if df['filename'].str.contains(re.escape(name)).any():
         revised = df[df.filename != name]
-        save_df(revised, binary)
+        save = Thread(target=save_df, args=(revised, binary))
+        save.start()
+        save.join()
         reduction = len(df.index) - len(revised.index)
-        click.echo(f'Removed {reduction} records from dataframe.')
+        click.secho(f'Removed {reduction} records from dataframe.',
+                    fg='bright_green')
     else:
         click.secho('No matching records in dataframe.', fg='bright_red')
 
@@ -187,9 +195,14 @@ def extract(directory, binary, form, incremental, report):
                 results.at[pdf, 'status'] = 'partial'
                 results.at[pdf, 'erpg'] = fails
             if incremental:
-                save_df(df, f'{cwd}\\{binary}')
+                os.chdir(cwd)
+                save = Thread(target=save_df, args=(df, binary))
+                save.start()
+                save.join()
+                os.chdir(directory)
         if not incremental:
-            save_df(df, f'{cwd}\\{binary}')
+            os.chdir(cwd)
+            save_df(df, binary)
         click.secho(f'Extracted and saved {total} total pages.',
                     fg='bright_green')
         if report:
@@ -214,7 +227,9 @@ def init(binary, form):
             sys.exit()
     columns = ['filename', 'page', 'text']
     df = pd.DataFrame(columns=columns)
-    save_df(df, binary)
+    save = Thread(target=save_df, args=(df, binary))
+    save.start()
+    save.join()
 
 
 @cli.command()
