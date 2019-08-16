@@ -31,7 +31,7 @@ For successful text extraction, input PDFs must have been processed using [Optic
 pdfca extracts each individual page in each PDF, meaning that for use cases where records must be labelled with *real* page numbers, PDFs may need to be trimmed to the desired page range. This could be done with Adobe Acrobat or a similar piece of software.
 
 ## Notes on stored data
-- For analysis beyond the basic `view` and `search` commands included, generated data may be imported to any software or language that supports the [.parquet](https://parquet.apache.org/) or [.feather](https://github.com/wesm/feather) storage formats.
+- For analysis beyond the basic `view` and `search` commands included, generated data may be imported to any software or language that supports the [Parquet](https://parquet.apache.org/) or [Feather](https://github.com/wesm/feather) storage formats.
 - Please note that the Feather format, though more interoperable with other software and languages, is not currently designed for long-term data storage.
 - For more information, explore the [Apache Arrow](https://arrow.apache.org/) documentation.
 
