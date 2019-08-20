@@ -145,8 +145,10 @@ def cut(name, binary, form):
               help='Save dataframe between each file (safer but slower).')
 @click.option('--report', '-r', is_flag=True,
               help='Show status report after export (asks to save as .csv).')
+@click.option('--walk', '-w', is_flag=True,
+              help='Walk through sub-directories to find PDFs (recursive).')
 @file_spec
-def extract(directory, binary, form, incremental, report):
+def extract(directory, binary, form, incremental, report, walk):
     """Scrape text from pages of files in given folder.
     Requires DIRECTORY (whether relative or absolute).
     Use "./" as DIRECTORY to process files in the current directory."""
@@ -155,7 +157,10 @@ def extract(directory, binary, form, incremental, report):
     cwd = os.getcwd()
     os.chdir(directory)
     results = {}
-    pdfs = glob.glob('*.pdf')
+    if walk:
+        pdfs = glob.glob('**/*.pdf', recursive=True)
+    else:
+        pdfs = glob.glob('*.pdf')
     saved = list(df['filename'].unique())
     for s in saved:
         if (s + '.pdf') in pdfs:
