@@ -85,7 +85,9 @@ def cli():
 @cli.command()
 @click.argument('binary')
 def convert(binary):
-    """Convert binary file to its opposite format (Parquet/Feather). Leaves the original binary intact. Requires BINARY as a complete filename ending in ".parquet" or ".feather".\n
+    """Convert binary file to its opposite format (Parquet/Feather).
+    Leaves the original binary intact.
+    Requires BINARY as a full filename ending in ".parquet" or ".feather".
     NOTE: This operation is potentially destructive (use with care)."""
     form = os.path.splitext(binary)[1]
     pref = os.path.splitext(binary)[0]
