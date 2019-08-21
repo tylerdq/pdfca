@@ -14,12 +14,13 @@ import PyPDF2
 
 
 def checkIndex(dataframe):
-    key = click.prompt('Please enter item to explore')
+    key = int(click.prompt('Please enter item to explore'))
     while True:
-        if key in dataframe.index:
+        if key in dataframe.index.values:
+            key = dataframe.at[key, 'filename']
             return key
         else:
-            key = click.prompt('Please enter a valid key')
+            key = int(click.prompt('Please enter a valid key'))
 
 
 def count(x, term):
@@ -267,15 +268,19 @@ def search(term, binary, form, search_type, number):
     else:
         results = dropped.sum().sort_values(by=[term])
     click.echo(f'Top {number} results:')
-    results = results.tail(number)
+    results = results.tail(number).reset_index()
     click.echo(results)
     if click.confirm('\nWould you like to drill down?'):
-        key = checkIndex(results)
-        filtered = grouped.get_group(key).sort_values(by=[term])
-        filtered = filtered.set_index('page')
-        click.echo()
-        click.echo(f'Top {number} results:')
-        click.echo(filtered.tail(number).sort_values(by=['page']))
+        while True:
+            key = checkIndex(results)
+            filtered = grouped.get_group(key).sort_values(by=[term])
+            filtered = filtered.set_index('page')
+            click.echo()
+            click.echo(f'Top {number} results:')
+            click.echo(filtered.tail(number).sort_values(by=['page']))
+            if not click.confirm('\nExplore another PDF?'):
+                break
+            click.echo(f'{results}\n')
 
 
 @cli.command()
