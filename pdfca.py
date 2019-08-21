@@ -287,7 +287,10 @@ def summarize(deep, binary, form):
     By default, summarizes across all references."""
     load_df(binary + form)
     if deep:
-        click.echo(df.groupby(['filename']).describe())
+        try:
+            click.echo(df.groupby(['filename']).describe())
+        except:
+            click.secho('Empty dataframe!', fg='bright_red')
     else:
         click.echo(df.describe())
 
