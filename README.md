@@ -2,6 +2,8 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1972950.svg)](https://doi.org/10.5281/zenodo.1972950)
 
+NOTICE: This software is phasing out of development. Recommend to use [pdfgrep](https://pdfgrep.org/) instead. [Example notebook](https://github.com/tylerdq/notebooks/blob/master/pdfgrep_gdrive.ipynb) with no-install plotting implementation.
+
 pdfca (PDF Corpus/Content Analysis) can assist with managing a PDF corpus for textual characterization. It provides various commands for building and interacting with such a corpus through [Pandas dataframes](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html) stored locally via [Apache Arrow](https://arrow.apache.org/) binaries, which the user can then pass to other software (including languages such as R) for further analysis.
 
 ## Installation, setup, and help
